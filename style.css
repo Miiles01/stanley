@@ -64,18 +64,16 @@ h1 span {
     color: var(--primary);
 }
 
-/* ScrollSmoother scaffold: navbar, footer + modals live OUTSIDE #smooth-wrapper
-   (transformed content can't hold position:sticky). The wrapper sits ABOVE the
-   fixed footer so the page scrolls up and "reveals" the footer underneath. */
+/* ScrollSmoother scaffold: navbar + modals live OUTSIDE #smooth-wrapper
+   (transformed content can't hold position:sticky). The footer is a normal
+   in-flow element at the end of #smooth-content. */
 #smooth-wrapper {
     overflow: hidden;
     position: relative;
-    z-index: 1;
 }
 
 #smooth-content {
     padding-top: var(--nav-h);
-    padding-bottom: 80vh; /* reveal window — matches the footer height (set exactly in JS) */
 }
 
 /* Navbar — fixed (was sticky; sticky breaks inside ScrollSmoother's content) */
@@ -1011,30 +1009,19 @@ section.section--crayon {
     align-self: flex-start;
 }
 
-/* ===== Footer — fixed, revealed by the page scrolling up over it (+ parallax) ===== */
+/* ===== Footer — normal, in-flow at the end of the page ===== */
 .site-footer {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 0; /* behind #smooth-wrapper (z-index: 1); revealed as content scrolls up */
-    height: 80vh;
     background-color: var(--text-color);
     color: #fff;
-    padding: 72px 5% 40px;
+    padding: 96px 5% 44px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    overflow: hidden;
 }
 
 .footer-inner {
-    position: relative;
-    z-index: 1;
     display: flex;
     flex-direction: column;
     gap: 48px;
-    will-change: transform; /* parallax drift target (see script.js) */
 }
 
 .footer-grid {
@@ -1141,16 +1128,8 @@ section.section--crayon {
     .footer-brand {
         grid-column: 1 / -1;
     }
-    /* On mobile the 80vh fixed "reveal" footer clips its tall stacked content;
-       fall back to a normal footer at the end of the page. */
-    #smooth-content {
-        padding-bottom: 0;
-    }
     .site-footer {
-        position: static;
-        height: auto;
-        padding: 80px 5% 40px;
-        justify-content: flex-start;
+        padding: 72px 5% 40px;
     }
     .footer-inner {
         gap: 36px;

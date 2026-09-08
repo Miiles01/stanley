@@ -473,40 +473,6 @@ function initAnimations() {
         });
     }
 
-    // ---- Footer reveal + parallax (desktop/tablet only) ----
-    // The footer is position:fixed behind the content. #smooth-content gets a
-    // bottom pad equal to the footer height, so the last stretch of scroll slides
-    // the page up and uncovers the footer. Its inner content drifts up slowly
-    // (parallax) as it's revealed. On mobile (≤768px) the footer is a normal
-    // static block at the end of the page — CSS handles that; skip this.
-    const footer = document.getElementById('site-footer');
-    const smoothContent = document.getElementById('smooth-content');
-    const footerInner = footer && footer.querySelector('.footer-inner');
-
-    if (footer && smoothContent && footerInner && window.innerWidth > 768) {
-        const syncFooterPad = () => {
-            smoothContent.style.paddingBottom = footer.offsetHeight + 'px';
-        };
-        syncFooterPad();
-
-        gsap.fromTo(footerInner,
-            { y: 90 },
-            {
-                y: 0,
-                ease: 'none',
-                scrollTrigger: {
-                    trigger: smoothContent,
-                    start: 'bottom bottom',
-                    end: () => '+=' + footer.offsetHeight,
-                    scrub: true,
-                    invalidateOnRefresh: true
-                }
-            });
-
-        ScrollTrigger.addEventListener('refreshInit', syncFooterPad);
-        window.addEventListener('resize', () => ScrollTrigger.refresh());
-    }
-
     if (typeof SplitText !== 'undefined') {
         gsap.registerPlugin(SplitText);
         gsap.utils.toArray('.text').forEach(el => {

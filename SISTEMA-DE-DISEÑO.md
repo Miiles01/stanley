@@ -259,18 +259,20 @@ Se aplica a: `.feature-card`, `.menu-item`, `.testimonial-card`,
   ```
   <body>
     <nav class="navbar">…</nav>            ← FUERA (fixed, z-index 100)
-    <div id="smooth-wrapper">              ← z-index 1
-      <div id="smooth-content">…secciones…</div>
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
+        …secciones…
+        <footer id="site-footer">…</footer> ← DENTRO, normal, al final
+      </div>
     </div>
-    <footer id="site-footer">…</footer>    ← FUERA (fixed, z-index 0 — ver §13.1)
     <div id="cart-modal">…</div>           ← FUERA (fixed)
     <div id="auth-modal">…</div>           ← FUERA (fixed)
     <div id="reserve-modal">…</div>        ← FUERA (fixed)
   </body>
   ```
   El contenido dentro de `#smooth-content` se transforma → **`position: sticky`
-  NO funciona ahí dentro**. Por eso navbar, footer y modales van fuera, con
-  `position: fixed`.
+  NO funciona ahí dentro**. Por eso navbar y modales van fuera, con
+  `position: fixed`. El footer sí va dentro (es un bloque normal en el flujo).
 - Init en `initAnimations()`:
   ```js
   ScrollSmoother.create({
@@ -286,19 +288,17 @@ Se aplica a: `.feature-card`, `.menu-item`, `.testimonial-card`,
 - ⚠️ **No se puede probar el scroll en el preview de Claude Code** (congela
   `requestAnimationFrame` → ScrollSmoother no corre). Verificar en navegador real.
 
-### 13.1 Footer reveal + parallax
+### 13.1 Footer
 
-- **Footer reveal:** el `<footer id="site-footer">` está FUERA de
-  `#smooth-content`, `position: fixed; bottom: 0; height: 80vh; z-index: 0`
-  (detrás de `#smooth-wrapper` que es `z-index: 1`). `#smooth-content` lleva un
-  `padding-bottom` = alto exacto del footer (lo fija `initAnimations()` con
-  `footer.offsetHeight`, y en `refreshInit`/`resize`). Al hacer scroll hasta el
-  final, la página sube y "revela" el footer fijo debajo, como un telón.
-- **Parallax:** `initAnimations()` hace `gsap.fromTo('.footer-inner', {y:90}, {y:0,
-  ease:'none', scrollTrigger:{trigger:'#smooth-content', start:'bottom bottom',
-  end:'+=<footerH>', scrub:true}})` → el contenido del footer sube más lento
-  mientras se revela.
-- **El footer sigue siendo oscuro** (`--text-color` #111, texto blanco translúcido).
+- **Footer normal, sin efectos.** El `<footer id="site-footer">` va DENTRO de
+  `#smooth-content`, al final, como un bloque `position: static` en el flujo.
+  Scrollea con el resto de la página.
+- **Nada de reveal ni parallax.** Se probó el efecto "telón" (footer fijo detrás
+  del contenido) + parallax de `.footer-inner`, y el usuario pidió quitarlo
+  (7 sep 2026). No hay `padding-bottom` en `#smooth-content`, ni `will-change`,
+  ni ScrollTrigger para el footer.
+- **El footer es oscuro** (`--text-color` #111, texto blanco). `padding: 96px 5%
+  44px` desktop / `72px 5% 40px` móvil (`@media max-width:768px`).
 
 ### 13.2 Secciones "crayola" (fondo naranja fuerte con ondas dibujadas a mano)
 
