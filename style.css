@@ -809,21 +809,26 @@ input:focus,
     }
 }
 
-/* ===== Bold-orange section with hand-drawn crayon waves ===== */
-/* `section.` prefix so it beats the per-section background rules regardless of order */
+/* ===== Bold-orange section with hand-drawn crayon wave ===== */
+/* `section.` prefix so it beats the per-section background rules regardless of order.
+   The crayon squiggle is a pre-rendered PNG (baked from the old SVG filter —
+   feTurbulence on scroll was janky on mobile). */
 section.section--crayon {
     position: relative;
     overflow: hidden;
     background-color: #F15A0C; /* stronger orange than --primary */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
     color: #fff;
 }
 
-.section-crayon {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
+#menu.section--crayon {
+    background-image: url("images/crayon-menu.png?v=1");
+}
+
+#testimonials.section--crayon {
+    background-image: url("images/crayon-testimonials.png?v=1");
 }
 
 .section--crayon > .menu-container,
@@ -1147,7 +1152,9 @@ section.section--crayon {
         grid-column: auto;
         grid-row: auto;
     }
+    /* keep the footer link groups two-up even on narrow phones */
     .footer-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px 20px;
     }
 }

@@ -303,23 +303,24 @@ tarjetas (features, menú, testimonios, ubicación, footer).
 - Inspiración: fondos tipo la referencia azul con trazos a crayón. En nuestro
   caso naranja más fuerte.
 - Clase `section.section--crayon` → `background-color: #F15A0C` (más saturado que
-  `--primary`), `color: #fff`, `position: relative; overflow: hidden`.
-- Primer hijo: `<svg class="section-crayon">` absoluto que cubre la sección
-  (`inset: 0`, `pointer-events: none`). Dibujo: **1 trazo largo, fino y continuo
-  tipo firma/cursiva** (`stroke: #A83600`, `stroke-width: 3`, `opacity: 0.65`)
-  con bucles y swashes que cruzan la sección, + 1 trazo corto secundario. NO son
-  ondas paralelas gruesas — es una línea suelta con mucho espacio negativo
-  (referencia: garabato cursivo del cliente).
-- **Textura de crayón/pincel** en el filtro SVG (cada instancia con `id` único
-  `crayon-a`/`crayon-b`): (1) `feTurbulence` fractalNoise `baseFrequency≈0.022` +
-  `feDisplacementMap scale≈9` → borde tembloroso; (2) `feTurbulence`
-  `baseFrequency≈0.7` + `feColorMatrix` (última fila `0 0 0 0.9 -0.3`, saca alfa
-  con huecos) + `feComposite operator="in"` → **grano perforado en el trazo**
-  (se siente crayola, no vector limpio); (3) `feMerge` con la línea completa
-  debajo del grano para que no se rompa en puntos. `stroke-width: 7`,
-  `stroke: #9E3200`, `opacity: 0.6`.
-- El contenedor de contenido (`.menu-container` / `.section-container`) lleva
-  `position: relative; z-index: 1` para quedar sobre el SVG.
+  `--primary`), `color: #fff`, `position: relative; overflow: hidden`, +
+  `background: no-repeat center / cover` para el trazo.
+- **El trazo es una IMAGEN PNG pre-renderizada, NO un SVG en vivo** (7 sep 2026).
+  El filtro `feTurbulence` + `feDisplacementMap` se recalculaba en cada scroll y
+  trababa el móvil. Se horneó a PNG una sola vez y se sirve como `background-image`:
+  - `#menu.section--crayon { background-image: url("images/crayon-menu.png") }`
+  - `#testimonials.section--crayon { background-image: url("images/crayon-testimonials.png") }`
+  - PNGs con alfa, 1440×640, ~30 KB c/u. Se generaron con Chrome headless
+    (`--headless=new --screenshot --default-background-color=00000000`) desde un
+    HTML con el SVG original. Para regenerarlos: los HTML fuente quedaron en el
+    scratchpad de la sesión (`crayon-a.html` / `crayon-b.html`), con el filtro
+    exacto (turbulence + displacement + grano vía `feColorMatrix` `0 0 0 0.9 -0.3`
+    + `feComposite operator="in"`, `stroke #9E3200`, width 7, opacity 0.6).
+- El dibujo: **1 trazo largo, fino y continuo tipo firma/cursiva** con bucles,
+  mucho espacio negativo. NO ondas paralelas gruesas.
+- Ya NO hay elemento `.section-crayon` en el DOM ni regla CSS para él.
+- El contenedor de contenido (`.menu-container` / `.section-container`) sigue con
+  `position: relative; z-index: 1`.
 - `.section--crayon h2` → blanco; `.section--crayon .section-lead` → blanco 92%.
   Las tarjetas interiores siguen blancas (`--bg-color`) → buen contraste.
 - **Aplicado a:** sección **Menu** (`#menu`) y **Testimonials** (`#testimonials`).

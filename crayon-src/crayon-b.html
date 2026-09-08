@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><style>
+  html,body{margin:0;padding:0;background:transparent}
+  svg{display:block}
+</style></head>
+<body>
+<svg width="1440" height="640" viewBox="0 0 1440 640" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="crayon-b" x="-15%" y="-15%" width="130%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.024" numOctaves="3" seed="12" result="warp" />
+      <feDisplacementMap in="SourceGraphic" in2="warp" scale="9" result="line" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="3" seed="31" result="grain" />
+      <feColorMatrix in="grain" type="matrix"
+        values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 -0.3" result="grainA" />
+      <feComposite in="line" in2="grainA" operator="in" result="grainy" />
+      <feMerge>
+        <feMergeNode in="line" />
+        <feMergeNode in="grainy" />
+        <feMergeNode in="grainy" />
+      </feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#crayon-b)" fill="none" stroke="#9E3200" stroke-width="7" stroke-linecap="round" opacity="0.6">
+    <path d="M1400 80 C 1080 220 820 450 620 520 C 450 580 360 450 450 260 C 510 140 660 140 660 260" />
+  </g>
+</svg>
+</body>
+</html>

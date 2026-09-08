@@ -6,7 +6,7 @@
     <title>Chez Stanley — Resto-Bar Sportif</title>
     <!-- Mark JS on before first paint so animatable elements start hidden (no flash). -->
     <script>document.documentElement.classList.add('gsap');</script>
-    <link rel="stylesheet" href="style.css?v=46">
+    <link rel="stylesheet" href="style.css?v=47">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Ultra&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -79,29 +79,6 @@
 
     <!-- Menu Section -->
     <section id="menu" class="menu-section section--crayon">
-        <svg class="section-crayon" viewBox="0 0 1440 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-            <defs>
-                <filter id="crayon-a" x="-15%" y="-15%" width="130%" height="130%">
-                    <!-- rough, wobbly edge -->
-                    <feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="3" seed="4" result="warp" />
-                    <feDisplacementMap in="SourceGraphic" in2="warp" scale="9" result="line" />
-                    <!-- crayon grain: fine noise punched through the stroke -->
-                    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" seed="17" result="grain" />
-                    <feColorMatrix in="grain" type="matrix"
-                        values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 -0.3" result="grainA" />
-                    <feComposite in="line" in2="grainA" operator="in" result="grainy" />
-                    <!-- keep a ghost of the full line so it stays continuous -->
-                    <feMerge>
-                        <feMergeNode in="line" />
-                        <feMergeNode in="grainy" />
-                        <feMergeNode in="grainy" />
-                    </feMerge>
-                </filter>
-            </defs>
-            <g filter="url(#crayon-a)" fill="none" stroke="#9E3200" stroke-width="7" stroke-linecap="round" opacity="0.6">
-                <path d="M40 560 C 360 420 620 190 820 120 C 990 60 1080 190 990 380 C 930 500 780 500 780 380" />
-            </g>
-        </svg>
         <div class="menu-container">
             <h2 class="text">Our Menu</h2>
             <div class="menu-grid" id="menu-grid">
@@ -131,26 +108,6 @@
 
     <!-- Testimonials Section -->
     <section id="testimonials" class="testimonials-section section--crayon">
-        <svg class="section-crayon" viewBox="0 0 1440 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-            <defs>
-                <filter id="crayon-b" x="-15%" y="-15%" width="130%" height="130%">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.024" numOctaves="3" seed="12" result="warp" />
-                    <feDisplacementMap in="SourceGraphic" in2="warp" scale="9" result="line" />
-                    <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="3" seed="31" result="grain" />
-                    <feColorMatrix in="grain" type="matrix"
-                        values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 -0.3" result="grainA" />
-                    <feComposite in="line" in2="grainA" operator="in" result="grainy" />
-                    <feMerge>
-                        <feMergeNode in="line" />
-                        <feMergeNode in="grainy" />
-                        <feMergeNode in="grainy" />
-                    </feMerge>
-                </filter>
-            </defs>
-            <g filter="url(#crayon-b)" fill="none" stroke="#9E3200" stroke-width="7" stroke-linecap="round" opacity="0.6">
-                <path d="M1400 80 C 1080 220 820 450 620 520 C 450 580 360 450 450 260 C 510 140 660 140 660 260" />
-            </g>
-        </svg>
         <div class="section-container">
             <h2 class="text">What locals say</h2>
             <p class="section-lead line">Regulars keep coming back. Here's why.</p>
