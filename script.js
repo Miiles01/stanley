@@ -2,49 +2,54 @@
 let cart = JSON.parse(localStorage.getItem('brasserie_cart')) || [];
 let user = JSON.parse(localStorage.getItem('brasserie_user')) || null;
 
-// Menu — the three dishes you can take home
+// Menu — les plats à emporter
 const products = [
     {
         id: 1,
-        name: "The Overtime Burger",
-        desc: "Double smash patty, aged cheddar, bacon jam, crisp lettuce, tomato and red onion. Hand-cut fries on the side.",
+        name: "Le burger prolongation",
+        desc: "Double galette smash, cheddar vieilli, confit de bacon, laitue croquante, tomate et oignon rouge. Frites coupées à la main.",
         price: 18.00,
         img: "images/menu/burger.png",
         icon: "🍔"
     },
     {
         id: 2,
-        name: "Power-Play Wings",
-        desc: "A dozen crispy wings tossed in sticky hot-honey BBQ, with house ranch to dip.",
+        name: "Ailes en avantage numérique",
+        desc: "Une douzaine d'ailes croustillantes glacées au BBQ miel-piquant, avec ranch maison pour tremper.",
         price: 15.50,
         img: "images/menu/wings.png",
         icon: "🍗"
     },
     {
         id: 3,
-        name: "Centre-Ice Tartare",
-        desc: "Diced salmon and tuna, cucumber, fresh mint, toasted almonds and a lime-herb yogurt.",
+        name: "Tartare centre de la glace",
+        desc: "Saumon et thon en dés, concombre, menthe fraîche, amandes grillées et yogourt lime et herbes.",
         price: 16.00,
         img: "images/menu/tartare.png",
         icon: "🐟"
     },
     {
         id: 4,
-        name: "Faceoff Caesar",
-        desc: "Crispy fried chicken over romaine, shaved parmesan, bacon bits, croutons and house Caesar.",
+        name: "César mise au jeu",
+        desc: "Poulet frit croustillant sur romaine, parmesan en copeaux, morceaux de bacon, croûtons et vinaigrette César maison.",
         price: 16.50,
         img: "images/menu/chicken-caesar.png",
         icon: "🥗"
     },
     {
         id: 5,
-        name: "Slapshot Shrimp",
-        desc: "Garlic-butter shrimp over herbed rice, finished with lemon and parsley.",
+        name: "Crevettes lancer frappé",
+        desc: "Crevettes au beurre à l'ail sur riz aux herbes, rehaussées de citron et de persil.",
         price: 19.00,
         img: "images/menu/shrimp-rice.png",
         icon: "🍤"
     }
 ];
+
+// Prix en format québécois : « 18,00 $ »
+function fmtPrice(n) {
+    return `${Number(n).toFixed(2).replace('.', ',')} $`;
+}
 
 // DOM Elements
 const menuGrid = document.getElementById('menu-grid');
@@ -77,8 +82,8 @@ function renderMenu() {
                 <h3 class="text">${p.name}</h3>
                 <p>${p.desc}</p>
                 <div class="menu-item-footer">
-                    <span class="price">$${p.price.toFixed(2)}</span>
-                    <button class="btn primary-btn add-to-cart" data-id="${p.id}">Add</button>
+                    <span class="price">${fmtPrice(p.price)}</span>
+                    <button class="btn primary-btn add-to-cart" data-id="${p.id}">Ajouter</button>
                 </div>
             </div>
         </div>
@@ -122,8 +127,8 @@ function updateCart() {
 
 function renderCartItems() {
     if (cart.length === 0) {
-        cartItems.innerHTML = '<p style="text-align:center; color:var(--text-secondary)">Nothing on your plate yet.</p>';
-        cartTotalPrice.innerText = '$0.00';
+        cartItems.innerHTML = '<p style="text-align:center; color:var(--text-secondary)">Rien dans ton assiette pour l\'instant.</p>';
+        cartTotalPrice.innerText = '0,00 $';
         return;
     }
 
@@ -133,22 +138,22 @@ function renderCartItems() {
                 <span class="cart-item-icon">${item.icon}</span>
                 <div>
                     <h4>${item.name}</h4>
-                    <p>Qty: ${item.quantity}</p>
+                    <p>Qté : ${item.quantity}</p>
                 </div>
             </div>
             <div style="display:flex; align-items:center; gap:16px;">
-                <strong>$${(item.price * item.quantity).toFixed(2)}</strong>
-                <button class="remove-btn" onclick="removeFromCart(${item.id})">Remove</button>
+                <strong>${fmtPrice(item.price * item.quantity)}</strong>
+                <button class="remove-btn" onclick="removeFromCart(${item.id})">Retirer</button>
             </div>
         </div>
     `).join('');
 
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    cartTotalPrice.innerText = `$${total.toFixed(2)}`;
+    cartTotalPrice.innerText = fmtPrice(total);
 }
 
 function checkout() {
-    if (cart.length === 0) return alert("Nothing on your plate yet.");
+    if (cart.length === 0) return alert("Rien dans ton assiette pour l'instant.");
     if (!user) {
         cartModal.classList.add('hidden');
         openAuthModal();
@@ -170,7 +175,7 @@ function checkout() {
     updateCart();
     cartModal.classList.add('hidden');
 
-    alert(`Order ${order.id} placed! You earned ${points} loyalty points.`);
+    alert(`Commande ${order.id} passée ! Tu as gagné ${points} points de fidélité.`);
     updateAuthUI();
 }
 
@@ -179,17 +184,17 @@ function updateAuthUI() {
     if (user) {
         const fresh = Store.getUserByEmail(user.email);
         if (fresh) user.points = fresh.points || 0;
-        authBtn.innerText = 'Account';
+        authBtn.innerText = 'Mon compte';
         authFormContainer.classList.add('hidden');
         userDashboard.classList.remove('hidden');
-        authTitle.innerText = 'Your Account';
-        document.getElementById('welcome-text').innerText = `Welcome, ${user.name}!`;
+        authTitle.innerText = 'Mon compte';
+        document.getElementById('welcome-text').innerText = `Bienvenue, ${user.name} !`;
         document.getElementById('loyalty-points').innerText = user.points;
     } else {
-        authBtn.innerText = 'Sign In';
+        authBtn.innerText = 'Connexion';
         authFormContainer.classList.remove('hidden');
         userDashboard.classList.add('hidden');
-        authTitle.innerText = 'Sign In / Join';
+        authTitle.innerText = 'Connexion / Inscription';
     }
 }
 
@@ -197,7 +202,7 @@ function login() {
     const name = nameInput.value.trim();
     const email = emailInput.value.trim();
     if (!name || !email) {
-        alert("Please enter both name and email.");
+        alert("Veuillez entrer votre nom et votre courriel.");
         return;
     }
     // Store is the source of truth; create the account if it's new
@@ -225,16 +230,17 @@ cartBtn.addEventListener('click', () => {
 });
 
 // Demo helper: prefill the join/login form with a random test user
-const TEST_FIRST_NAMES = ["Alex", "Jordan", "Sam", "Taylor", "Casey", "Morgan", "Riley", "Jamie", "Avery", "Quinn", "Drew", "Reese"];
-const TEST_LAST_NAMES = ["Carter", "Bennett", "Fisher", "Hayes", "Nguyen", "Patel", "Reyes", "Brooks", "Sullivan", "Foster", "Chen", "Murphy"];
+const TEST_FIRST_NAMES = ["Gabriel", "Léa", "Félix", "Camille", "Antoine", "Rosalie", "Olivier", "Charlotte", "Émile", "Florence", "Simon", "Maude"];
+const TEST_LAST_NAMES = ["Tremblay", "Gagné", "Roy", "Bouchard", "Côté", "Gauthier", "Lavoie", "Fortin", "Bergeron", "Nguyen", "Girard", "Pelletier"];
 
 function randomTestUser() {
     const first = TEST_FIRST_NAMES[Math.floor(Math.random() * TEST_FIRST_NAMES.length)];
     const last = TEST_LAST_NAMES[Math.floor(Math.random() * TEST_LAST_NAMES.length)];
     const num = Math.floor(100 + Math.random() * 900);
+    const slug = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     return {
         name: `${first} ${last}`,
-        email: `${first.toLowerCase()}.${last.toLowerCase()}${num}@example.com`
+        email: `${slug(first)}.${slug(last)}${num}@exemple.com`
     };
 }
 
@@ -279,7 +285,7 @@ function setNavDrawer(open) {
     navDrawer.classList.toggle('open', open);
     navToggle.classList.toggle('is-open', open);
     navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    navToggle.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
 }
 
 navToggle.addEventListener('click', (e) => {
@@ -351,8 +357,8 @@ reserveForm.addEventListener('submit', (e) => {
 
     if (!resDate.value || !resTime.value || !name || !validEmail) {
         resError.textContent = (!email || validEmail)
-            ? 'Please fill in every field.'
-            : 'That email doesn’t look right.';
+            ? 'Veuillez remplir tous les champs.'
+            : 'Ce courriel semble invalide.';
         resError.classList.remove('hidden');
         return;
     }
@@ -371,10 +377,10 @@ reserveForm.addEventListener('submit', (e) => {
     Store.addReservation(res);
 
     const when = new Date(res.date + 'T' + res.time);
-    const dateStr = when.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    const dateStr = when.toLocaleDateString('fr-CA', { weekday: 'long', month: 'long', day: 'numeric' });
     const timeStr = resTime.options[resTime.selectedIndex].text;
     document.getElementById('res-summary').textContent =
-        `Table for ${partySize} · ${dateStr} at ${timeStr}`;
+        `Table pour ${partySize} · ${dateStr} à ${timeStr}`;
     document.getElementById('res-code').textContent = res.id;
 
     reserveForm.classList.add('hidden');

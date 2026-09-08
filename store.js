@@ -16,11 +16,11 @@ const Store = {
     // Order lifecycle (the admin board columns, in order)
     STATUSES: ['new', 'preparing', 'ready', 'delivered'],
     STATUS_LABELS: {
-        new: 'New',
-        preparing: 'Preparing',
-        ready: 'Ready',
-        delivered: 'Delivered',
-        cancelled: 'Cancelled'
+        new: 'Nouvelle',
+        preparing: 'En préparation',
+        ready: 'Prête',
+        delivered: 'Livrée',
+        cancelled: 'Annulée'
     },
 
     _read(key, fallback) {

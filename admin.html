@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chez Stanley · Admin</title>
-    <link rel="stylesheet" href="style.css?v=44">
+    <link rel="stylesheet" href="style.css?v=47">
     <link rel="stylesheet" href="admin.css?v=7">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Ultra&display=swap" rel="stylesheet">
 </head>
@@ -13,11 +13,11 @@
     <!-- Login gate -->
     <div id="admin-gate" class="admin-gate">
         <div class="admin-gate-card">
-            <h1>Staff access</h1>
-            <p>Enter the dashboard password to continue.</p>
+            <h1>Accès personnel</h1>
+            <p>Entrez le mot de passe du tableau de bord pour continuer.</p>
             <div class="pass-field">
-                <input type="password" id="admin-pass" aria-label="Dashboard password" autocomplete="off" />
-                <button type="button" id="admin-pass-toggle" class="pass-toggle" aria-label="Show password" aria-pressed="false">
+                <input type="password" id="admin-pass" aria-label="Mot de passe du tableau de bord" autocomplete="off" />
+                <button type="button" id="admin-pass-toggle" class="pass-toggle" aria-label="Afficher le mot de passe" aria-pressed="false">
                     <svg class="icon-eye" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
                         <circle cx="12" cy="12" r="3" />
@@ -28,10 +28,10 @@
                     </svg>
                 </button>
             </div>
-            <button id="admin-enter" class="btn primary-btn full-width">Enter dashboard</button>
-            <p id="admin-error" class="admin-error hidden">That password doesn't match. Try again.</p>
-            <p class="admin-hint">Demo password: <code>admin2026</code> (pre-filled)</p>
-            <a class="admin-back" href="index.html">&larr; Back to site</a>
+            <button id="admin-enter" class="btn primary-btn full-width">Accéder au tableau de bord</button>
+            <p id="admin-error" class="admin-error hidden">Mot de passe incorrect. Réessayez.</p>
+            <p class="admin-hint">Mot de passe démo : <code>admin2026</code> (pré-rempli)</p>
+            <a class="admin-back" href="index.html">&larr; Retour au site</a>
         </div>
     </div>
 
@@ -40,8 +40,8 @@
         <header class="admin-header">
             <div class="admin-brand">Chez Stanley <span>Admin</span></div>
             <div class="admin-header-actions">
-                <a href="index.html" class="nav-btn">View site</a>
-                <button id="admin-logout" class="nav-btn">Log out</button>
+                <a href="index.html" class="nav-btn">Voir le site</a>
+                <button id="admin-logout" class="nav-btn">Déconnexion</button>
             </div>
         </header>
 
@@ -50,42 +50,42 @@
 
             <section class="admin-block">
                 <div class="admin-block-head">
-                    <h2>Orders</h2>
+                    <h2>Commandes</h2>
                     <div class="admin-block-actions">
-                        <button id="gen-order" class="btn secondary-btn">+ Generate sample order</button>
+                        <button id="gen-order" class="btn secondary-btn">+ Générer une commande test</button>
                     </div>
                 </div>
                 <div class="orders-board" id="orders-board"></div>
-                <p class="board-empty hidden" id="board-empty">No orders yet. Place one on the site, or generate a sample.</p>
+                <p class="board-empty hidden" id="board-empty">Aucune commande pour l'instant. Passez-en une sur le site ou générez un exemple.</p>
             </section>
 
             <section class="admin-block">
                 <div class="admin-block-head">
-                    <h2>Reservations</h2>
+                    <h2>Réservations</h2>
                     <div class="admin-block-actions">
-                        <button id="gen-reservation" class="btn secondary-btn">+ Generate sample booking</button>
+                        <button id="gen-reservation" class="btn secondary-btn">+ Générer une réservation test</button>
                     </div>
                 </div>
                 <div class="table-wrap">
                     <table class="users-table res-table" id="res-table"></table>
                 </div>
-                <p class="board-empty hidden" id="res-empty">No reservations yet. Book one from the site, or generate a sample.</p>
+                <p class="board-empty hidden" id="res-empty">Aucune réservation pour l'instant. Réservez depuis le site ou générez un exemple.</p>
             </section>
 
             <section class="admin-block">
                 <div class="admin-block-head">
-                    <h2>Loyalty members</h2>
-                    <button id="reset-demo" class="btn secondary-btn danger">Reset demo data</button>
+                    <h2>Membres fidélité</h2>
+                    <button id="reset-demo" class="btn secondary-btn danger">Réinitialiser les données démo</button>
                 </div>
                 <div class="table-wrap">
                     <table class="users-table" id="users-table"></table>
                 </div>
-                <p class="board-empty hidden" id="users-empty">No members yet. They're created when someone signs in on the site.</p>
+                <p class="board-empty hidden" id="users-empty">Aucun membre pour l'instant. Ils sont créés quand quelqu'un se connecte sur le site.</p>
             </section>
         </main>
     </div>
 
-    <script src="store.js?v=14"></script>
-    <script src="admin.js?v=6"></script>
+    <script src="store.js?v=15"></script>
+    <script src="admin.js?v=7"></script>
 </body>
 </html>

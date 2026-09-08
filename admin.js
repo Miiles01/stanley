@@ -9,15 +9,16 @@ const SESSION_FLAG = 'chezstanley_admin_ok';
 
 // Menu used only to fabricate sample orders from the dashboard
 const SAMPLE_PRODUCTS = [
-    { name: 'Classic Burger', price: 15.99, icon: '🍔' },
-    { name: 'Spicy Wings', price: 12.99, icon: '🍗' },
+    { name: 'Burger classique', price: 15.99, icon: '🍔' },
+    { name: 'Ailes piquantes', price: 12.99, icon: '🍗' },
     { name: 'Poutine', price: 9.99, icon: '🍟' },
-    { name: 'Craft Beer', price: 6.99, icon: '🍺' },
-    { name: 'Onion Rings', price: 7.99, icon: '🧅' },
-    { name: 'Caesar Salad', price: 10.99, icon: '🥗' }
+    { name: 'Bière de microbrasserie', price: 6.99, icon: '🍺' },
+    { name: 'Rondelles d\'oignon', price: 7.99, icon: '🧅' },
+    { name: 'Salade César', price: 10.99, icon: '🥗' }
 ];
-const SAMPLE_FIRST = ['Alex', 'Jordan', 'Sam', 'Taylor', 'Casey', 'Morgan', 'Riley', 'Jamie', 'Avery', 'Quinn'];
-const SAMPLE_LAST = ['Carter', 'Bennett', 'Fisher', 'Hayes', 'Nguyen', 'Patel', 'Reyes', 'Brooks', 'Sullivan', 'Foster'];
+const SAMPLE_FIRST = ['Gabriel', 'Léa', 'Félix', 'Camille', 'Antoine', 'Rosalie', 'Olivier', 'Charlotte', 'Émile', 'Florence'];
+const SAMPLE_LAST = ['Tremblay', 'Gagné', 'Roy', 'Bouchard', 'Côté', 'Gauthier', 'Lavoie', 'Fortin', 'Bergeron', 'Pelletier'];
+const slugify = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 /* ---------- Elements ---------- */
 const gate = document.getElementById('admin-gate');
@@ -54,7 +55,7 @@ passToggle.addEventListener('click', () => {
     const show = passInput.type === 'password';
     passInput.type = show ? 'text' : 'password';
     passToggle.setAttribute('aria-pressed', show ? 'true' : 'false');
-    passToggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    passToggle.setAttribute('aria-label', show ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
     passToggle.querySelector('.icon-eye').classList.toggle('hidden', show);
     passToggle.querySelector('.icon-eye-off').classList.toggle('hidden', !show);
     passInput.focus();
@@ -66,14 +67,14 @@ document.getElementById('admin-logout').addEventListener('click', () => {
 });
 
 /* ---------- Formatting helpers ---------- */
-const money = n => '$' + Number(n || 0).toFixed(2);
+const money = n => Number(n || 0).toFixed(2).replace('.', ',') + ' $';
 
 function timeAgo(ts) {
     const s = Math.floor((Date.now() - ts) / 1000);
-    if (s < 60) return 'just now';
-    if (s < 3600) return Math.floor(s / 60) + ' min ago';
-    if (s < 86400) return Math.floor(s / 3600) + ' h ago';
-    return Math.floor(s / 86400) + ' d ago';
+    if (s < 60) return 'à l\'instant';
+    if (s < 3600) return 'il y a ' + Math.floor(s / 60) + ' min';
+    if (s < 86400) return 'il y a ' + Math.floor(s / 3600) + ' h';
+    return 'il y a ' + Math.floor(s / 86400) + ' j';
 }
 
 function itemsSummary(items) {
@@ -93,12 +94,12 @@ function renderKpis(orders, users, reservations) {
     const upcomingBookings = (reservations || []).filter(r => (r.status || 'booked') === 'booked').length;
 
     const cards = [
-        { value: live.length, label: 'Orders' },
-        { value: money(revenue), label: 'Revenue' },
-        { value: inKitchen, label: 'In kitchen' },
-        { value: upcomingBookings, label: 'Bookings' },
-        { value: users.length, label: 'Members' },
-        { value: outstanding, label: 'Open points' }
+        { value: live.length, label: 'Commandes' },
+        { value: money(revenue), label: 'Revenus' },
+        { value: inKitchen, label: 'En cuisine' },
+        { value: upcomingBookings, label: 'Réservations' },
+        { value: users.length, label: 'Membres' },
+        { value: outstanding, label: 'Points actifs' }
     ];
 
     document.getElementById('kpi-row').innerHTML = cards.map(c => `
@@ -124,7 +125,7 @@ function renderBoard(orders) {
         const cards = inCol.map(o => `
             <div class="order-card ${status === 'delivered' ? 'is-delivered' : ''}">
                 ${status !== 'delivered'
-                    ? `<button class="order-cancel" data-cancel="${o.id}" title="Cancel order" aria-label="Cancel order">&times;</button>`
+                    ? `<button class="order-cancel" data-cancel="${o.id}" title="Annuler la commande" aria-label="Annuler la commande">&times;</button>`
                     : ''}
                 <div class="order-card-top">
                     <span class="order-id">${o.id}</span>
@@ -134,11 +135,11 @@ function renderBoard(orders) {
                 <div class="order-items">${itemsSummary(o.items)}</div>
                 <div class="order-meta">
                     <span class="order-total">${money(o.total)}</span>
-                    <span class="order-qty">${itemCount(o)} item${itemCount(o) === 1 ? '' : 's'}</span>
+                    <span class="order-qty">${itemCount(o)} article${itemCount(o) === 1 ? '' : 's'}</span>
                 </div>
                 ${next
-                    ? `<button class="order-advance" data-advance="${o.id}">Move to ${Store.STATUS_LABELS[next]}</button>`
-                    : `<span class="order-done">Completed</span>`}
+                    ? `<button class="order-advance" data-advance="${o.id}">Passer à « ${Store.STATUS_LABELS[next]} »</button>`
+                    : `<span class="order-done">Terminée</span>`}
             </div>
         `).join('');
 
@@ -193,8 +194,8 @@ function renderUsers(users) {
                     <td>${redeemed
                         ? `<span class="pill redeemed">✓ ${u.pointsRedeemed} pts</span>`
                         : `<span class="pill pending">—</span>`}</td>
-                    <td class="u-joined">${new Date(u.createdAt).toLocaleDateString()}</td>
-                    <td class="u-action"><button class="redeem-btn" data-redeem="${u.email}" ${u.points > 0 ? '' : 'disabled'}>Redeem</button></td>
+                    <td class="u-joined">${new Date(u.createdAt).toLocaleDateString('fr-CA')}</td>
+                    <td class="u-action"><button class="redeem-btn" data-redeem="${u.email}" ${u.points > 0 ? '' : 'disabled'}>Échanger</button></td>
                 </tr>
             `;
         }).join('');
@@ -202,7 +203,7 @@ function renderUsers(users) {
     table.innerHTML = `
         <thead>
             <tr>
-                <th>Member</th><th>Email</th><th>Points</th><th>Redeemed</th><th>Joined</th><th></th>
+                <th>Membre</th><th>Courriel</th><th>Points</th><th>Échangés</th><th>Inscrit</th><th></th>
             </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -217,12 +218,12 @@ function renderUsers(users) {
 }
 
 /* ---------- Reservations ---------- */
-const RES_STATUS_LABEL = { booked: 'Booked', seated: 'Seated', cancelled: 'Cancelled' };
+const RES_STATUS_LABEL = { booked: 'Réservée', seated: 'Installée', cancelled: 'Annulée' };
 
 function fmtResDate(dateStr, timeStr) {
     const d = new Date(dateStr + 'T' + timeStr);
-    const day = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-    const t = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    const day = d.toLocaleDateString('fr-CA', { weekday: 'short', month: 'short', day: 'numeric' });
+    const t = d.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' });
     return { day, t };
 }
 
@@ -254,8 +255,8 @@ function renderReservations() {
                     <td><span class="pill res-${status}">${RES_STATUS_LABEL[status]}</span></td>
                     <td class="u-action">
                         ${status === 'booked'
-                            ? `<button class="redeem-btn" data-seat="${r.id}">Seat</button>
-                               <button class="order-cancel-inline" data-res-cancel="${r.id}" title="Cancel booking" aria-label="Cancel booking">&times;</button>`
+                            ? `<button class="redeem-btn" data-seat="${r.id}">Installer</button>
+                               <button class="order-cancel-inline" data-res-cancel="${r.id}" title="Annuler la réservation" aria-label="Annuler la réservation">&times;</button>`
                             : ''}
                     </td>
                 </tr>
@@ -264,7 +265,7 @@ function renderReservations() {
 
     table.innerHTML = `
         <thead>
-            <tr><th>Guest</th><th>When</th><th>Party</th><th>Email</th><th>Status</th><th></th></tr>
+            <tr><th>Client</th><th>Quand</th><th>Personnes</th><th>Courriel</th><th>Statut</th><th></th></tr>
         </thead>
         <tbody>${rows}</tbody>
     `;
@@ -283,7 +284,7 @@ function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function generateSampleReservation() {
     const first = pick(SAMPLE_FIRST);
     const last = pick(SAMPLE_LAST);
-    const email = `${first}.${last}${Math.floor(100 + Math.random() * 900)}@example.com`.toLowerCase();
+    const email = `${slugify(first)}.${slugify(last)}${Math.floor(100 + Math.random() * 900)}@exemple.com`;
     const daysAhead = Math.floor(Math.random() * 10);
     const d = new Date();
     d.setDate(d.getDate() + daysAhead);
@@ -311,7 +312,7 @@ function generateSampleOrder() {
     } else {
         const first = pick(SAMPLE_FIRST);
         const last = pick(SAMPLE_LAST);
-        const email = `${first}.${last}${Math.floor(100 + Math.random() * 900)}@example.com`.toLowerCase();
+        const email = `${slugify(first)}.${slugify(last)}${Math.floor(100 + Math.random() * 900)}@exemple.com`;
         customer = Store.upsertUser({ name: `${first} ${last}`, email });
     }
 
@@ -338,7 +339,7 @@ function generateSampleOrder() {
 document.getElementById('gen-order').addEventListener('click', generateSampleOrder);
 
 document.getElementById('reset-demo').addEventListener('click', () => {
-    if (confirm('Wipe all demo orders and members? This cannot be undone.')) {
+    if (confirm('Effacer toutes les commandes et tous les membres de la démo ? Cette action est irréversible.')) {
         Store.clearAll();
         render();
     }

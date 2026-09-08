@@ -34,7 +34,15 @@
 
 ## 2. Idioma
 
-- **Todo el contenido visible está en inglés.** Copy, botones, labels, alt text.
+- **Todo el contenido visible está en francés (Québec).** Copy, botones, labels,
+  alt text, mensajes de `alert()`, panel admin. `<html lang="fr">` en las dos páginas.
+  (Cambió 7 sep 2026 — antes era inglés; el restaurante está en Sherbrooke, QC.)
+- Convenciones québécoises: precios `18,00 $` (coma decimal, espacio antes del `$`);
+  horas `18 h 30`; fechas con `toLocaleDateString('fr-CA', …)` / `toLocaleTimeString('fr-CA', …)`.
+  Helper `fmtPrice(n)` en `script.js`, `money(n)` en `admin.js`.
+- Nombres de prueba québécois en `TEST_FIRST_NAMES`/`TEST_LAST_NAMES` (script.js) y
+  `SAMPLE_FIRST`/`SAMPLE_LAST` (admin.js). Los correos generados quitan acentos con
+  un `slug`/`slugify` (NFD + strip diacríticos) y usan `@exemple.com`.
 - La documentación interna (este archivo, comentarios de commits) va en español.
 
 ## 3. Color
