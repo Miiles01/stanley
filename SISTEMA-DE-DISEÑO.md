@@ -222,39 +222,37 @@ gsap.from(".line", {
 Se aplica a: párrafo del hero, `.section-lead` de cada sección, y los `<p>` de
 tarjetas (features, menú, testimonios, ubicación, footer).
 
-### 12.3 `.reveal` — tarjetas y media
+### 12.3 `.reveal` — tarjetas y media: SIN animación de entrada
 
-Fade in de entrada con leve subida, en cascada por grupo visible
-(`ScrollTrigger.batch('.reveal', ...)`):
-
-```js
-gsap.from(".reveal", {
-  opacity: 0, y: 24,
-  stagger: 0.12, duration: 0.7,
-  ease: "power2.out"
-});
-```
-
-Se aplica a: `.feature-card`, `.menu-item`, `.testimonial-card`,
-`.gallery-item` (las 6 fotos), `.location-map` y `.location-details`.
+- **Las tarjetas y las imágenes NO animan.** Se quitó el fade-in `.reveal`
+  (7 sep 2026) porque en móvil hacía que la página se sintiera trabada.
+- La clase `.reveal` sigue en el markup (feature cards, gallery, menu items)
+  pero ya **no hace nada**: no está en la regla `html.gsap { opacity: 0 }` ni
+  hay `ScrollTrigger.batch('.reveal')`. Renderizan a opacidad 1 de una.
+- Si algún día se re-activa, era: `gsap.fromTo('.reveal', {opacity:0, y:24},
+  {opacity:1, y:0, stagger:0.12, duration:0.7, ease:'power2.out'})` vía batch.
 
 ### 12.4 Reglas de animación
 
-- Clases `.text`, `.line` y `.reveal` = **solo** marcan qué anima. No llevan estilos.
-- Nuevas secciones: `.text` en títulos, `.line` en párrafos, `.reveal` en
-  tarjetas/imágenes → quedan animadas automáticamente (el JS las recoge, incluso
-  las `.menu-item` que genera `renderMenu()`).
-- No animar: logos (navbar/footer), iconos, badges, precios, controles.
+- Clases `.text` y `.line` = **solo** marcan qué anima. No llevan estilos.
+- Nuevas secciones: `.text` en títulos, `.line` en párrafos. Tarjetas/imágenes
+  NO se animan.
+- No animar: tarjetas, imágenes, logos (navbar/footer), iconos, badges, precios,
+  controles.
 - `ease` estándar del proyecto: `power2.out`.
-- El failsafe de 4s en `initAnimations()` cubre `.text`, `.line` y `.reveal`:
+- El failsafe de 4s en `initAnimations()` cubre `.text` y `.line`:
   si un tween se cuelga, revela lo que quedó con `opacity < 0.95`.
 
 ## 13. Scroll — GSAP ScrollSmoother
 
 - **Smooth scroll de toda la página** con
   [`ScrollSmoother`](https://gsap.com/docs/v3/Plugins/ScrollSmoother/) (plugin
-  GSAP, gratis desde 3.13). Da inercia/momentum al scroll y habilita
-  `data-speed` / `data-lag` para parallax (`effects: true`).
+  GSAP, gratis desde 3.13). Da inercia/momentum al scroll.
+- **Solo desktop/tablet (`window.innerWidth > 768`).** En móvil ScrollSmoother +
+  `normalizeScroll` secuestra el scroll táctil y se traba → en móvil se usa el
+  scroll nativo del navegador (7 sep 2026). Los anchors internos en móvil caen
+  a `fallbackScrollTo` (rAF) + `scroll-behavior: smooth` de CSS.
+- `effects: false` — ya no hay elementos con `data-speed`/`data-lag`.
 - **Estructura DOM obligatoria** (en `index.html`):
   ```
   <body>
@@ -273,11 +271,11 @@ Se aplica a: `.feature-card`, `.menu-item`, `.testimonial-card`,
   El contenido dentro de `#smooth-content` se transforma → **`position: sticky`
   NO funciona ahí dentro**. Por eso navbar y modales van fuera, con
   `position: fixed`. El footer sí va dentro (es un bloque normal en el flujo).
-- Init en `initAnimations()`:
+- Init en `initAnimations()` (dentro del guard `window.innerWidth > 768`):
   ```js
   ScrollSmoother.create({
     wrapper: '#smooth-wrapper', content: '#smooth-content',
-    smooth: 1.3, effects: true, normalizeScroll: true
+    smooth: 1.3, effects: false, normalizeScroll: true
   });
   ```
 - **Anchors internos** (`a[href^="#"]`): `smoother.scrollTo(target, true, 'top <navH>px')`.

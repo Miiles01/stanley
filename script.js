@@ -450,7 +450,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 // them in on scroll with fromTo (explicit start + end, no snapshot guesswork).
 // .text   -> headings (h1/h2/h3): word-by-word reveal
 // .line   -> paragraphs / descriptions: rise + fade, staggered per on-screen group
-// .reveal -> cards & media (menu items, feature/testimonial cards, gallery, map): fade + rise
+// (cards & media just render — no entrance animation, it stuttered on mobile)
 function initAnimations() {
     const root = document.documentElement;
 
@@ -461,14 +461,16 @@ function initAnimations() {
     }
     gsap.registerPlugin(ScrollTrigger);
 
-    // Page-wide smooth scrolling (momentum). Native scroll on touch devices.
-    if (typeof ScrollSmoother !== 'undefined') {
+    // Page-wide smooth scrolling (momentum) — desktop/tablet only.
+    // On phones (<=768px) ScrollSmoother + normalizeScroll hijacks touch
+    // scrolling and stutters, so we let the browser scroll natively there.
+    if (typeof ScrollSmoother !== 'undefined' && window.innerWidth > 768) {
         gsap.registerPlugin(ScrollSmoother);
         smoother = ScrollSmoother.create({
             wrapper: '#smooth-wrapper',
             content: '#smooth-content',
             smooth: 1.3,
-            effects: true,
+            effects: false,
             normalizeScroll: true
         });
     }
@@ -505,20 +507,11 @@ function initAnimations() {
         )
     });
 
-    ScrollTrigger.batch('.reveal', {
-        start: 'top 90%',
-        once: true,
-        onEnter: batch => gsap.fromTo(batch,
-            { opacity: 0, y: 24 },
-            { opacity: 1, y: 0, stagger: 0.12, duration: 0.7, ease: 'power2.out', overwrite: true }
-        )
-    });
-
     // Failsafe: reveal anything that is on screen but still hidden a few seconds
     // after load (e.g. a stalled tween in a throttled tab). Off-screen elements
     // are left alone so their scroll animation still plays.
     setTimeout(() => {
-        document.querySelectorAll('.line, .text, .reveal').forEach(el => {
+        document.querySelectorAll('.line, .text').forEach(el => {
             const r = el.getBoundingClientRect();
             const onScreen = r.top < window.innerHeight && r.bottom > 0;
             if (onScreen && parseFloat(getComputedStyle(el).opacity) < 0.95) {

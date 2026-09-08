@@ -32,7 +32,6 @@ html {
 /* Entrance animations: hide animatable elements before GSAP runs so they never
    flash visible-then-hidden. The <head> inline script adds .gsap; if GSAP fails
    to load, initAnimations() removes it and everything shows normally. */
-html.gsap .reveal,
 html.gsap .line,
 html.gsap .text {
     opacity: 0;
