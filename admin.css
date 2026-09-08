@@ -1,0 +1,733 @@
+/* ============================================================================
+   admin.css — Chez Stanley staff dashboard
+   Reuses tokens, reset, buttons and .hidden from style.css. Same visual
+   language as the storefront: Poppins body / Ultra headings, orange + grey,
+   rounded cards, no divider lines. Admin-only functional colours below.
+   ========================================================================== */
+
+:root {
+    --admin-go: #1E9E5A;     /* green — "ready" / redeemed */
+    --admin-wait: #E0A500;   /* amber — "preparing" */
+    --admin-danger: #C0392B; /* destructive actions only */
+}
+
+body.admin {
+    background-color: var(--bg-secondary);
+    min-height: 100vh;
+}
+
+/* The storefront's aggressive section padding must not leak into the admin
+   (admin uses bare <section> elements for layout, not full-bleed bands). */
+body.admin section {
+    padding: 0;
+}
+
+/* Ultra display face for headings + brand (same rule as the storefront) */
+body.admin h1,
+body.admin h2,
+.admin-brand {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.005em;
+}
+
+/* ---------- Login gate ---------- */
+.admin-gate {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.admin-gate-card {
+    background-color: var(--bg-color);
+    border-radius: 24px;
+    padding: 44px 40px;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.18);
+}
+
+.admin-gate-card h1 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+
+.admin-gate-card > p {
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
+
+.pass-field {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.admin-gate-card input {
+    width: 100%;
+    padding: 16px 52px 16px 16px;
+    border: none;
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    font-family: var(--font-main);
+    font-size: 1rem;
+}
+
+.admin-gate-card input:focus {
+    outline: 2px solid var(--primary);
+}
+
+.pass-toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.pass-toggle:hover {
+    color: var(--primary);
+}
+
+.pass-toggle:focus-visible {
+    outline: 2px solid var(--primary);
+}
+
+.admin-hint {
+    margin-top: 18px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.admin-hint code {
+    background-color: var(--bg-secondary);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.9em;
+}
+
+.admin-error {
+    margin-top: 14px;
+    color: var(--admin-danger);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.admin-back {
+    display: inline-block;
+    margin-top: 22px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.admin-back:hover {
+    color: var(--primary);
+}
+
+/* ---------- Shell ---------- */
+.admin-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 5%;
+    background-color: var(--bg-color);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 8px 24px -16px rgba(0, 0, 0, 0.12);
+}
+
+.admin-brand {
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+.admin-brand span {
+    color: var(--primary);
+}
+
+.admin-header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.admin-header-actions .nav-btn {
+    padding: 9px 16px;
+    border-radius: 50px;
+    background-color: var(--bg-secondary);
+    text-decoration: none;
+    color: var(--text-color);
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.admin-header-actions .nav-btn:hover {
+    background-color: #ECEEF0;
+    color: var(--primary);
+}
+
+.admin-main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 44px 5% 100px;
+}
+
+/* ---------- KPIs ---------- */
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+    margin-bottom: 48px;
+}
+
+.kpi {
+    background-color: var(--bg-color);
+    border-radius: 16px;
+    padding: 20px;
+    min-height: 96px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.kpi-value {
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+}
+
+.kpi-label {
+    margin-top: 6px;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+/* ---------- Blocks ---------- */
+.admin-block {
+    margin-bottom: 56px;
+}
+
+.admin-block:last-child {
+    margin-bottom: 0;
+}
+
+.admin-block-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.admin-block-head h2 {
+    font-size: 1.35rem;
+}
+
+.admin-block-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.admin-block .btn {
+    padding: 10px 18px;
+    font-size: 0.88rem;
+}
+
+.btn.danger {
+    color: var(--admin-danger);
+    background-color: transparent;
+}
+
+.btn.danger:hover {
+    background-color: rgba(192, 57, 43, 0.08);
+}
+
+/* ---------- Orders board ---------- */
+.orders-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    align-items: start;
+}
+
+.board-col {
+    background-color: var(--bg-color);
+    border-radius: 18px;
+    padding: 14px;
+    min-height: 88px;
+}
+
+.board-col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 0 2px;
+}
+
+.board-col-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.board-col-title .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.board-col[data-status="preparing"] .dot { background-color: var(--admin-wait); }
+.board-col[data-status="ready"] .dot { background-color: var(--admin-go); }
+.board-col[data-status="delivered"] .dot { background-color: var(--primary); }
+
+.board-col-count {
+    min-width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-secondary);
+    border-radius: 50px;
+    padding: 0 7px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.board-col-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.board-col-empty {
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 12px 0;
+    font-size: 0.9rem;
+}
+
+.order-card {
+    position: relative;
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 14px 14px 12px;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.25);
+}
+
+.order-cancel {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1;
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.12s, color 0.12s, background-color 0.12s;
+}
+
+.order-card:hover .order-cancel {
+    opacity: 1;
+}
+
+.order-cancel:hover {
+    color: var(--admin-danger);
+    background-color: rgba(192, 57, 43, 0.1);
+}
+
+.order-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    padding-right: 18px;
+}
+
+.order-id {
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.order-time {
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    white-space: nowrap;
+}
+
+.order-customer {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin: 8px 0 4px;
+}
+
+.order-items {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    line-height: 1.55;
+    margin-bottom: 12px;
+}
+
+.order-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.order-total {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.order-qty {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.order-advance {
+    width: 100%;
+    border: none;
+    background-color: var(--primary);
+    color: #fff;
+    font-family: var(--font-main);
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 9px 10px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.order-advance:hover {
+    background-color: var(--primary-hover);
+}
+
+.order-done {
+    display: block;
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--admin-go);
+    padding: 6px 0 2px;
+}
+
+.order-card.is-delivered {
+    opacity: 0.62;
+}
+
+.order-card.is-delivered:hover {
+    opacity: 1;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ---------- Users table ---------- */
+.table-wrap {
+    overflow-x: auto;
+    background-color: var(--bg-color);
+    border-radius: 18px;
+    padding: 6px;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 620px;
+}
+
+.users-table th,
+.users-table td {
+    text-align: left;
+    padding: 13px 14px;
+    vertical-align: middle;
+}
+
+.users-table th:first-child,
+.users-table td:first-child {
+    padding-left: 16px;
+}
+
+.users-table th:last-child,
+.users-table td:last-child {
+    padding-right: 16px;
+}
+
+.users-table th {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.users-table tbody tr {
+    transition: background-color 0.12s;
+}
+
+.users-table tbody tr:nth-child(even) {
+    background-color: var(--bg-secondary);
+}
+
+.users-table tbody tr:hover {
+    background-color: rgba(255, 102, 0, 0.06);
+}
+
+.users-table tbody td:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.users-table tbody td:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.u-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.u-avatar {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: var(--primary);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.u-email {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    word-break: break-all;
+}
+
+.u-joined {
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.users-table .num {
+    font-weight: 700;
+}
+
+.u-action {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.pill {
+    display: inline-block;
+    padding: 3px 11px;
+    border-radius: 50px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.pill.redeemed {
+    background-color: rgba(30, 158, 90, 0.14);
+    color: var(--admin-go);
+}
+
+.pill.pending {
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+}
+
+.users-table tbody tr:nth-child(even) .pill.pending {
+    background-color: #ECEEF0;
+}
+
+.redeem-btn {
+    border: none;
+    background-color: var(--primary);
+    color: #fff;
+    font-family: var(--font-main);
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 8px 16px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.redeem-btn:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+}
+
+.redeem-btn:disabled {
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: default;
+}
+
+/* ---------- Reservations table ---------- */
+.res-when {
+    white-space: nowrap;
+}
+
+.res-when strong {
+    display: block;
+    font-weight: 700;
+}
+
+.res-when span {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+}
+
+.pill.res-booked {
+    background-color: rgba(255, 102, 0, 0.12);
+    color: var(--primary);
+}
+
+.pill.res-seated {
+    background-color: rgba(30, 158, 90, 0.14);
+    color: var(--admin-go);
+}
+
+.pill.res-cancelled {
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+}
+
+.res-table tbody tr.is-off {
+    opacity: 0.5;
+}
+
+.order-cancel-inline {
+    width: 30px;
+    height: 30px;
+    margin-left: 6px;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    line-height: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: color 0.12s, background-color 0.12s;
+}
+
+.order-cancel-inline:hover {
+    color: var(--admin-danger);
+    background-color: rgba(192, 57, 43, 0.1);
+}
+
+/* ---------- Empty states ---------- */
+.board-empty {
+    color: var(--text-secondary);
+    text-align: center;
+    background-color: var(--bg-color);
+    border-radius: 18px;
+    padding: 40px 24px;
+    font-size: 0.92rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+    .kpi-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .orders-board {
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(240px, 72%);
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+        padding-bottom: 8px;
+    }
+    .board-col {
+        scroll-snap-align: start;
+    }
+}
+
+@media (max-width: 680px) {
+    .admin-main {
+        padding: 28px 5% 72px;
+    }
+    .admin-header {
+        padding: 14px 5%;
+        gap: 12px;
+    }
+    .admin-brand {
+        font-size: 1rem;
+    }
+    .admin-brand span {
+        display: none; /* the page title already reads "Admin" */
+    }
+    .admin-header-actions .nav-btn {
+        padding: 8px 13px;
+        font-size: 0.85rem;
+    }
+    .kpi-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 36px;
+    }
+    .kpi {
+        min-height: 0;
+        padding: 16px;
+    }
+    .kpi-value {
+        font-size: 1.5rem;
+    }
+    .orders-board {
+        grid-auto-columns: 86%;
+    }
+    .admin-block {
+        margin-bottom: 44px;
+    }
+    .admin-block-head {
+        margin-bottom: 16px;
+    }
+}

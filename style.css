@@ -1,0 +1,1175 @@
+:root {
+    --primary: #FF6600; /* Orange */
+    --primary-hover: #E55C00;
+    --bg-color: #FFFFFF;
+    --text-color: #111111;
+    --bg-secondary: #F8F9FA;
+    --text-secondary: #555555;
+    --font-main: 'Poppins', sans-serif;        /* body, descriptions, UI */
+    --font-display: 'Ultra', 'Georgia', serif; /* h1 / h2 / important phrases */
+    --nav-h: 92px;                             /* fixed navbar height (desktop) */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* In-page navigation: ScrollSmoother (script.js) drives the actual smooth scroll
+   for anchor clicks; this CSS is the fallback for history / back-forward nav. */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--nav-h);
+}
+
+@media (max-width: 768px) {
+    :root {
+        --nav-h: 68px;
+    }
+}
+
+/* Entrance animations: hide animatable elements before GSAP runs so they never
+   flash visible-then-hidden. The <head> inline script adds .gsap; if GSAP fails
+   to load, initAnimations() removes it and everything shows normally. */
+html.gsap .reveal,
+html.gsap .line,
+html.gsap .text {
+    opacity: 0;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+/* Typography */
+h1, h2, h3 {
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+/* Ultra is a heavy slab display face — h1, h2 and anything marked .display.
+   h3 and everything else stays on Poppins (--font-main). */
+h1, h2, .display {
+    font-family: var(--font-display);
+    font-weight: 400; /* Ultra ships a single weight */
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+}
+
+h1 span {
+    color: var(--primary);
+}
+
+/* ScrollSmoother scaffold: navbar, footer + modals live OUTSIDE #smooth-wrapper
+   (transformed content can't hold position:sticky). The wrapper sits ABOVE the
+   fixed footer so the page scrolls up and "reveals" the footer underneath. */
+#smooth-wrapper {
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+#smooth-content {
+    padding-top: var(--nav-h);
+    padding-bottom: 80vh; /* reveal window — matches the footer height (set exactly in JS) */
+}
+
+/* Navbar — fixed (was sticky; sticky breaks inside ScrollSmoother's content) */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--bg-color);
+    z-index: 100;
+}
+
+
+.nav-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+a.nav-brand {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.nav-brand img {
+    height: 52px;
+    width: auto;
+    display: block;
+}
+
+.nav-links {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: var(--primary);
+}
+
+/* Hamburger menu at EVERY breakpoint. The drawer (About / Gallery / Visit) drops
+   as a full-width panel below the navbar; Menu, Sign In and the plate stay inline. */
+.nav-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 9px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* Full-width panel that slides + fades open from under the navbar. Pure CSS so
+   it never depends on the JS animation loop. It's always in the DOM; visibility
+   is toggled so it can transition (display can't). */
+.nav-drawer {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 5% 22px;
+    background-color: var(--bg-color);
+    box-shadow: 0 22px 28px -16px rgba(0, 0, 0, 0.22);
+    z-index: 200;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-14px);
+    pointer-events: none;
+    transition:
+        opacity 0.26s ease,
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0s linear 0.4s;
+}
+
+.nav-drawer.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+    transition:
+        opacity 0.26s ease,
+        transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0s;
+}
+
+.nav-drawer a {
+    padding: 15px 10px;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    /* staggered rise-in, driven by .open + per-item transition-delay */
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.3s ease, transform 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-drawer.open a {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.nav-drawer.open a:nth-child(1) { transition-delay: 0.05s; }
+.nav-drawer.open a:nth-child(2) { transition-delay: 0.11s; }
+.nav-drawer.open a:nth-child(3) { transition-delay: 0.17s; }
+.nav-drawer.open a:nth-child(4) { transition-delay: 0.23s; }
+
+.nav-drawer a:hover {
+    background-color: var(--bg-secondary);
+}
+
+.nav-toggle span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background-color: var(--text-color);
+    transition: transform 0.25s ease, opacity 0.2s ease;
+}
+
+.nav-toggle.is-open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.nav-toggle.is-open span:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-toggle.is-open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    font-family: var(--font-main);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.orange-btn {
+    background-color: var(--primary);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 50px;
+}
+
+/* "Your plate" — replaces the shopping-cart button. Icon + count badge. */
+.plate-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: color 0.2s, transform 0.15s;
+}
+
+.plate-btn:hover {
+    color: var(--primary);
+}
+
+.plate-icon {
+    width: 30px;
+    height: 26px;
+    display: block;
+}
+
+.plate-count {
+    position: absolute;
+    top: -4px;
+    right: -7px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 50px;
+}
+
+.plate-count.is-empty {
+    display: none;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    font-family: var(--font-main); /* <button> doesn't inherit body font */
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.primary-btn {
+    background-color: var(--primary);
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.secondary-btn {
+    background-color: var(--bg-secondary);
+    color: var(--text-color);
+}
+
+.secondary-btn:hover {
+    background-color: #EEEEEE;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.mt-4 {
+    margin-top: 16px;
+}
+
+/* Utility: toggled by JS (auth form vs. dashboard). Needs !important to beat #id selectors. */
+.hidden {
+    display: none !important;
+}
+
+/* Hero Section — background video + dark overlay */
+.hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 84vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 5%;
+    background-color: var(--text-color); /* fallback if the video/poster fail */
+    color: #fff;
+}
+
+.hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        linear-gradient(180deg, rgba(18, 11, 6, 0.55) 0%, rgba(18, 11, 6, 0.72) 100%),
+        rgba(241, 90, 12, 0.12); /* faint brand warmth */
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 820px;
+}
+
+.hero h1 {
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    margin-bottom: 24px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 40px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* White pill so the secondary CTA reads over the video */
+.hero-actions .secondary-btn {
+    background-color: #fff;
+    color: var(--text-color);
+}
+
+.hero-actions .secondary-btn:hover {
+    background-color: #fff;
+    color: var(--primary);
+}
+
+/* Sections — generous vertical rhythm, dialed down per breakpoint */
+section {
+    padding: 128px 5%;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    section {
+        padding: 96px 6%;
+    }
+}
+
+.about-section {
+    background-color: var(--bg-color);
+}
+
+.about-container h2, .menu-container h2 {
+    font-size: 2rem;
+    margin-bottom: 48px;
+    text-align: center;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+}
+
+.feature-card {
+    background-color: var(--bg-secondary);
+    padding: 40px;
+    border-radius: 24px;
+    text-align: left;
+}
+
+.feature-card h3 {
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+}
+
+/* Menu Grid */
+.menu-section {
+    background-color: var(--bg-secondary);
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+}
+
+.menu-item {
+    background-color: var(--bg-color);
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-item-photo {
+    aspect-ratio: 4 / 3;
+    background-color: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.menu-item-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.menu-item-body {
+    padding: 26px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.menu-item h3 {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+}
+
+.menu-item p {
+    color: var(--text-secondary);
+    margin-bottom: 22px;
+    flex-grow: 1;
+}
+
+.menu-item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+/* Modals */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: var(--bg-color);
+    padding: 40px;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+/* Cart Items */
+.cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-secondary);
+    padding: 16px;
+    border-radius: 16px;
+}
+
+.cart-item-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.cart-item-icon {
+    font-size: 2rem;
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+}
+
+.remove-btn {
+    color: var(--primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Auth Form */
+#auth-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+input,
+.reserve-form select {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+input:focus,
+.reserve-form select:focus {
+    outline: 2px solid var(--primary);
+}
+
+/* ===== Reserve a table (demo) ===== */
+.reserve-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.reserve-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field > span {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--bg-secondary);
+    border-radius: 50px;
+    padding: 6px;
+    width: fit-content;
+}
+
+.stepper-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.stepper-btn:hover {
+    background-color: var(--primary);
+    color: #fff;
+}
+
+.stepper-value {
+    min-width: 40px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.reserve-error {
+    color: #C0392B;
+    font-weight: 600;
+    font-size: 0.88rem;
+    margin: -4px 0 0;
+}
+
+.reserve-note {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin: 4px 0 0;
+}
+
+.reserve-success {
+    text-align: center;
+    padding: 8px 0 0;
+}
+
+.reserve-check {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reserve-success h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
+
+.reserve-summary {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.reserve-code {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
+
+.reserve-code strong {
+    color: var(--text-color);
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 480px) {
+    .reserve-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.loyalty-card {
+    background: var(--primary);
+    color: white;
+    padding: 32px;
+    border-radius: 24px;
+    text-align: center;
+}
+
+.loyalty-card h2 {
+    font-size: 4rem;
+}
+
+/* Mobile Polish */
+@media (max-width: 768px) {
+    .navbar {
+        gap: 12px;
+        padding: 14px 5%;
+    }
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    .hero-actions .btn {
+        width: 100%;
+    }
+}
+/* Mobile Polish Details */
+@media (max-width: 768px) {
+    .nav-brand {
+        font-size: 1.25rem;
+    }
+    .nav-brand img {
+        height: 40px;
+    }
+    .nav-links {
+        gap: 12px;
+        font-size: 0.9rem;
+    }
+    .nav-links > a,
+    .nav-btn {
+        white-space: nowrap;
+        font-size: 0.9rem;
+    }
+    .hero {
+        padding: 40px 5%;
+    }
+    section {
+        padding: 64px 5%;
+    }
+    .about-container h2, .menu-container h2 {
+        font-size: 1.6rem;
+        margin-bottom: 24px;
+    }
+    .menu-item-body {
+        padding: 22px 22px 24px;
+    }
+    .modal-content {
+        padding: 24px;
+    }
+    .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    .cart-item > div:last-child {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* ===== Bold-orange section with hand-drawn crayon waves ===== */
+/* `section.` prefix so it beats the per-section background rules regardless of order */
+section.section--crayon {
+    position: relative;
+    overflow: hidden;
+    background-color: #F15A0C; /* stronger orange than --primary */
+    color: #fff;
+}
+
+.section-crayon {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.section--crayon > .menu-container,
+.section--crayon > .section-container {
+    position: relative;
+    z-index: 1;
+}
+
+.section--crayon h2 {
+    color: #fff;
+}
+
+.section--crayon .section-lead {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+/* Cards on the orange section are white — reset their text off the section's
+   white `color` so h3 / price / quotes don't turn invisible. */
+.section--crayon .menu-item,
+.section--crayon .testimonial-card {
+    color: var(--text-color);
+}
+
+/* ===== Shared section scaffolding (Gallery / Testimonials / Location) ===== */
+.section-container h2 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.section-lead {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+    max-width: 640px;
+    margin: 0 auto 48px;
+}
+
+/* ===== Gallery ===== */
+.gallery-section {
+    background-color: var(--bg-color);
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 16px;
+}
+
+.gallery-item {
+    margin: 0;
+    border-radius: 24px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    background-color: var(--bg-secondary);
+}
+
+.gallery-item--feature {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.04);
+}
+
+/* ===== Testimonials ===== */
+.testimonials-section {
+    background-color: var(--bg-secondary);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+}
+
+.testimonial-card {
+    background-color: var(--bg-color);
+    border-radius: 24px;
+    padding: 40px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.testimonial-card p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    flex-grow: 1;
+}
+
+.stars {
+    color: var(--primary);
+    letter-spacing: 4px;
+    font-size: 1rem;
+}
+
+.testimonial-card footer {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.testimonial-avatar {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center 30%; /* bias toward the face, not the chin/chest */
+    flex-shrink: 0;
+    display: block;
+}
+
+.testimonial-name {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+}
+
+.testimonial-name small {
+    font-weight: 400;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+/* ===== Location ===== */
+.location-section {
+    background-color: var(--bg-color);
+}
+
+.location-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 40px;
+    align-items: stretch;
+}
+
+.location-map {
+    border-radius: 24px;
+    overflow: hidden;
+    min-height: 380px;
+    background-color: var(--bg-secondary);
+}
+
+.location-map iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 380px;
+    border: 0;
+    display: block;
+}
+
+.location-details {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    justify-content: center;
+}
+
+.location-block h3 {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+}
+
+.location-block p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.location-details .btn {
+    align-self: flex-start;
+}
+
+/* ===== Footer — fixed, revealed by the page scrolling up over it (+ parallax) ===== */
+.site-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0; /* behind #smooth-wrapper (z-index: 1); revealed as content scrolls up */
+    height: 80vh;
+    background-color: var(--text-color);
+    color: #fff;
+    padding: 72px 5% 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.footer-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    will-change: transform; /* parallax drift target (see script.js) */
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    gap: 40px;
+}
+
+.footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.site-footer .nav-brand {
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.footer-logo {
+    height: 84px;
+    width: auto;
+    max-width: 100%;
+    align-self: flex-start; /* stop the flex column from stretching the image */
+    object-fit: contain;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.footer-brand p {
+    color: rgba(255, 255, 255, 0.65);
+    max-width: 320px;
+    line-height: 1.6;
+}
+
+.footer-col h4 {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 4px;
+}
+
+.footer-col a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    transition: color 0.2s;
+    width: fit-content;
+}
+
+.footer-col a:hover {
+    color: var(--primary);
+}
+
+.footer-col p {
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.6;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.footer-bottom a {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: underline;
+}
+
+/* ===== Mobile polish for the new sections ===== */
+@media (max-width: 768px) {
+    .section-container h2 {
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+    }
+    .section-lead {
+        font-size: 1rem;
+        margin-bottom: 32px;
+    }
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .gallery-item--feature {
+        grid-column: span 2;
+        grid-row: auto;
+        aspect-ratio: 16 / 10;
+    }
+    .testimonial-card {
+        padding: 28px;
+    }
+    .location-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+    }
+    .footer-brand {
+        grid-column: 1 / -1;
+    }
+    /* On mobile the 80vh fixed "reveal" footer clips its tall stacked content;
+       fall back to a normal footer at the end of the page. */
+    #smooth-content {
+        padding-bottom: 0;
+    }
+    .site-footer {
+        position: static;
+        height: auto;
+        padding: 80px 5% 40px;
+        justify-content: flex-start;
+    }
+    .footer-inner {
+        gap: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+    .gallery-item,
+    .gallery-item--feature {
+        aspect-ratio: 16 / 10;
+    }
+    .gallery-item--feature {
+        grid-column: auto;
+        grid-row: auto;
+    }
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+}

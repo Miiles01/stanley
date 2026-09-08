@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chez Stanley — Resto-Bar Sportif</title>
+    <!-- Mark JS on before first paint so animatable elements start hidden (no flash). -->
+    <script>document.documentElement.classList.add('gsap');</script>
+    <link rel="stylesheet" href="style.css?v=44">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Ultra&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="#" class="nav-brand" aria-label="Chez Stanley — home">
+            <img src="images/logo.png?v=1" alt="Chez Stanley" />
+        </a>
+        <div class="nav-links">
+            <a href="#menu">Menu</a>
+            <div class="nav-drawer" id="nav-drawer">
+                <a href="#about">About</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#reserve" data-reserve>Reserve</a>
+            </div>
+            <button id="auth-btn" class="nav-btn">Sign In</button>
+            <button id="cart-btn" class="nav-btn plate-btn" aria-label="Your plate">
+                <svg class="plate-icon" viewBox="-3 -2 58 47" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M26 7.667a24 24 0 0 0-24 24h48a24 24 0 0 0-24-24Z" />
+                    <line x1="2" y1="40.333" x2="50" y2="40.333" />
+                    <line x1="26" y1="2" x2="26" y2="7.667" />
+                </svg>
+                <span id="cart-count" class="plate-count is-empty">0</span>
+            </button>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-drawer">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div id="smooth-wrapper">
+    <div id="smooth-content">
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="video/hero-burgers-poster.jpg?v=1" aria-hidden="true">
+            <source src="video/hero-burgers.mp4?v=1" type="video/mp4" />
+        </video>
+        <div class="hero-overlay" aria-hidden="true"></div>
+        <div class="hero-content">
+            <h1 class="text">The ultimate <span>game night</span></h1>
+            <p class="line">Comfort food, cold local beer, and every game on the big screen. Sherbrooke's resto-bar sportif.</p>
+            <div class="hero-actions">
+                <a href="#menu" class="btn primary-btn">Order now</a>
+                <button type="button" class="btn secondary-btn" id="reserve-open">Reserve a table</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section (Why Dantora structure) -->
+    <section id="about" class="about-section">
+        <div class="about-container">
+            <h2 class="text">Why choose us?</h2>
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <h3 class="text">Local Craft Beer</h3>
+                    <p class="line">We source the best local Canadian brews to pair perfectly with your meal.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <h3 class="text">Signature Wings</h3>
+                    <p class="line">Our wings are legendary. Tossed in house-made sauces that pack a punch.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <h3 class="text">Loyalty Rewards</h3>
+                    <p class="line">Earn points with every order and unlock exclusive local discounts.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="menu-section section--crayon">
+        <svg class="section-crayon" viewBox="0 0 1440 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+                <filter id="crayon-a" x="-15%" y="-15%" width="130%" height="130%">
+                    <!-- rough, wobbly edge -->
+                    <feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="3" seed="4" result="warp" />
+                    <feDisplacementMap in="SourceGraphic" in2="warp" scale="9" result="line" />
+                    <!-- crayon grain: fine noise punched through the stroke -->
+                    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" seed="17" result="grain" />
+                    <feColorMatrix in="grain" type="matrix"
+                        values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 -0.3" result="grainA" />
+                    <feComposite in="line" in2="grainA" operator="in" result="grainy" />
+                    <!-- keep a ghost of the full line so it stays continuous -->
+                    <feMerge>
+                        <feMergeNode in="line" />
+                        <feMergeNode in="grainy" />
+                        <feMergeNode in="grainy" />
+                    </feMerge>
+                </filter>
+            </defs>
+            <g filter="url(#crayon-a)" fill="none" stroke="#9E3200" stroke-width="7" stroke-linecap="round" opacity="0.6">
+                <path d="M40 560 C 360 420 620 190 820 120 C 990 60 1080 190 990 380 C 930 500 780 500 780 380" />
+            </g>
+        </svg>
+        <div class="menu-container">
+            <h2 class="text">Our Menu</h2>
+            <div class="menu-grid" id="menu-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery-section">
+        <div class="section-container">
+            <h2 class="text">A taste of the place</h2>
+            <p class="section-lead line">Game nights, cold pints, and plates worth showing off.</p>
+            <div class="gallery-grid">
+                <figure class="gallery-item gallery-item--feature reveal">
+                    <img src="https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="A shared spread of comfort food" loading="lazy" />
+                </figure>
+                <figure class="gallery-item reveal">
+                    <img src="https://images.pexels.com/photos/2983101/pexels-photo-2983101.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Loaded burger with a side of fries" loading="lazy" />
+                </figure>
+                <figure class="gallery-item reveal">
+                    <img src="https://images.pexels.com/photos/1600711/pexels-photo-1600711.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Club sandwich with a basket of fries" loading="lazy" />
+                </figure>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials-section section--crayon">
+        <svg class="section-crayon" viewBox="0 0 1440 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+                <filter id="crayon-b" x="-15%" y="-15%" width="130%" height="130%">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.024" numOctaves="3" seed="12" result="warp" />
+                    <feDisplacementMap in="SourceGraphic" in2="warp" scale="9" result="line" />
+                    <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="3" seed="31" result="grain" />
+                    <feColorMatrix in="grain" type="matrix"
+                        values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 -0.3" result="grainA" />
+                    <feComposite in="line" in2="grainA" operator="in" result="grainy" />
+                    <feMerge>
+                        <feMergeNode in="line" />
+                        <feMergeNode in="grainy" />
+                        <feMergeNode in="grainy" />
+                    </feMerge>
+                </filter>
+            </defs>
+            <g filter="url(#crayon-b)" fill="none" stroke="#9E3200" stroke-width="7" stroke-linecap="round" opacity="0.6">
+                <path d="M1400 80 C 1080 220 820 450 620 520 C 450 580 360 450 450 260 C 510 140 660 140 660 260" />
+            </g>
+        </svg>
+        <div class="section-container">
+            <h2 class="text">What locals say</h2>
+            <p class="section-lead line">Regulars keep coming back. Here's why.</p>
+            <div class="testimonials-grid">
+                <blockquote class="testimonial-card">
+                    <div class="stars" aria-hidden="true">★★★★★</div>
+                    <p>"Best wings in the neighbourhood, hands down. The loyalty points paid for a whole round last month."</p>
+                    <footer>
+                        <img class="testimonial-avatar" src="images/avatars/rev-1.jpg?v=2" alt="" loading="lazy" />
+                        <span class="testimonial-name">Danielle L.<small>Regular since 2019</small></span>
+                    </footer>
+                </blockquote>
+                <blockquote class="testimonial-card">
+                    <div class="stars" aria-hidden="true">★★★★★</div>
+                    <p>"We watch every game here. Fast service, cold beer, and the poutine actually tastes like home."</p>
+                    <footer>
+                        <img class="testimonial-avatar" src="images/avatars/rev-2.jpg?v=2" alt="" loading="lazy" />
+                        <span class="testimonial-name">Marc R.<small>Season ticket holder</small></span>
+                    </footer>
+                </blockquote>
+                <blockquote class="testimonial-card">
+                    <div class="stars" aria-hidden="true">★★★★★</div>
+                    <p>"Ordered ahead through the site, walked in, food was ready. That's how it should work."</p>
+                    <footer>
+                        <img class="testimonial-avatar" src="images/avatars/rev-3.jpg?v=2" alt="" loading="lazy" />
+                        <span class="testimonial-name">Kevin T.<small>Orders weekly</small></span>
+                    </footer>
+                </blockquote>
+            </div>
+        </div>
+    </section>
+
+    <!-- Location Section -->
+    <section id="location" class="location-section">
+        <div class="section-container">
+            <h2 class="text">Find us</h2>
+            <p class="section-lead line">On Rue King East, Sherbrooke.</p>
+            <div class="location-grid">
+                <div class="location-map reveal">
+                    <iframe
+                        title="Map to Chez Stanley"
+                        src="https://maps.google.com/maps?q=1180%20Rue%20King%20E%2C%20Sherbrooke%2C%20QC&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+                <div class="location-details reveal">
+                    <div class="location-block">
+                        <h3 class="text">Address</h3>
+                        <p class="line">1180 Rue King E<br />Sherbrooke, QC</p>
+                    </div>
+                    <div class="location-block">
+                        <h3 class="text">Hours</h3>
+                        <p class="line">Mon–Thu&nbsp;&nbsp;11:00 – 23:00<br />
+                        Fri–Sat&nbsp;&nbsp;&nbsp;&nbsp;11:00 – 01:00<br />
+                        Sunday&nbsp;&nbsp;&nbsp;&nbsp;11:00 – 22:00</p>
+                    </div>
+                    <div class="location-block">
+                        <h3 class="text">Contact</h3>
+                        <p class="line">(819) 562-3350<br />hello@chezstanley.example</p>
+                    </div>
+                    <a class="btn primary-btn" href="https://maps.google.com/maps?q=1180%20Rue%20King%20E%2C%20Sherbrooke%2C%20QC" target="_blank" rel="noopener">Get directions</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    </div><!-- /#smooth-content -->
+    </div><!-- /#smooth-wrapper -->
+
+    <!-- Footer — fixed behind the content; the page scrolls up to reveal it -->
+    <footer class="site-footer" id="site-footer">
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div class="footer-col footer-brand">
+                    <img class="footer-logo" src="images/logo-footer.png?v=1" alt="Chez Stanley — resto • bar" />
+                    <p>Resto-bar sportif in Sherbrooke — comfort food, cold local beer, and a loyalty program that actually rewards you.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <a href="#menu">Menu</a>
+                    <a href="#about">About</a>
+                    <a href="#gallery">Gallery</a>
+                    <a href="#location">Visit</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Visit</h4>
+                    <p>1180 Rue King E<br />Sherbrooke, QC</p>
+                    <p>(819) 562-3350</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Follow</h4>
+                    <a href="#" rel="noopener">Instagram</a>
+                    <a href="#" rel="noopener">Facebook</a>
+                    <a href="#" rel="noopener">X / Twitter</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 Chez Stanley. All rights reserved.</span>
+                <span>Demo build.</span>
+                <a href="admin.html">Staff login</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals (outside the smoothed content) -->
+    <div id="cart-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Your plate</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div id="cart-items" class="cart-items"></div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total-price">$0.00</span>
+            </div>
+            <button id="checkout-btn" class="btn primary-btn full-width">Place order</button>
+        </div>
+    </div>
+
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="auth-title">Sign In / Join</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div id="auth-form-container">
+                <input type="text" id="auth-name" placeholder="Full Name" />
+                <input type="email" id="auth-email" placeholder="Email Address" />
+                <button id="login-submit-btn" class="btn primary-btn full-width">Continue</button>
+            </div>
+            <div id="user-dashboard" class="hidden">
+                <h3 id="welcome-text">Welcome!</h3>
+                <div class="loyalty-card">
+                    <p>Loyalty Points</p>
+                    <h2 id="loyalty-points">0</h2>
+                </div>
+                <button id="logout-btn" class="btn secondary-btn full-width mt-4">Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reserve-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="reserve-title">Reserve a table</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+
+            <form id="reserve-form" class="reserve-form" novalidate>
+                <div class="reserve-row">
+                    <label class="field">
+                        <span>Date</span>
+                        <input type="date" id="res-date" required />
+                    </label>
+                    <label class="field">
+                        <span>Time</span>
+                        <select id="res-time" required>
+                            <option value="17:00">5:00 PM</option>
+                            <option value="17:30">5:30 PM</option>
+                            <option value="18:00">6:00 PM</option>
+                            <option value="18:30" selected>6:30 PM</option>
+                            <option value="19:00">7:00 PM</option>
+                            <option value="19:30">7:30 PM</option>
+                            <option value="20:00">8:00 PM</option>
+                            <option value="20:30">8:30 PM</option>
+                            <option value="21:00">9:00 PM</option>
+                            <option value="21:30">9:30 PM</option>
+                            <option value="22:00">10:00 PM</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="field">
+                    <span>Party size</span>
+                    <div class="stepper" role="group" aria-label="Party size">
+                        <button type="button" class="stepper-btn" id="res-minus" aria-label="Fewer guests">&minus;</button>
+                        <span id="res-guests" class="stepper-value" aria-live="polite">2</span>
+                        <button type="button" class="stepper-btn" id="res-plus" aria-label="More guests">+</button>
+                    </div>
+                </div>
+
+                <label class="field">
+                    <span>Name</span>
+                    <input type="text" id="res-name" placeholder="Full name" required />
+                </label>
+                <label class="field">
+                    <span>Email</span>
+                    <input type="email" id="res-email" placeholder="you@example.com" required />
+                </label>
+
+                <p id="res-error" class="reserve-error hidden">Please fill in every field.</p>
+                <button type="submit" class="btn primary-btn full-width">Confirm reservation</button>
+                <p class="reserve-note">Demo only — no table is actually held.</p>
+            </form>
+
+            <div id="reserve-success" class="reserve-success hidden">
+                <div class="reserve-check" aria-hidden="true">✓</div>
+                <h3>You're booked!</h3>
+                <p class="reserve-summary" id="res-summary"></p>
+                <p class="reserve-code">Confirmation <strong id="res-code"></strong></p>
+                <button type="button" class="btn primary-btn full-width" id="res-done">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animation engine -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+    <script src="store.js?v=14"></script>
+    <script src="script.js?v=31"></script>
+</body>
+</html>
