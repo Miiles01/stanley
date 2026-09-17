@@ -347,14 +347,13 @@ tarjetas (features, menú, testimonios, ubicación, footer).
     oscuro. Alto: 84px.
   - Originales del cliente en `~/Downloads/stanley/` (`logotipo.png`,
     `logotipo footer.png`), redimensionados con `sips` al meterlos a `images/`.
-- Galería: fotos de **Pexels** por hotlink
-  (`images.pexels.com/photos/<id>/...?auto=compress&cs=tinysrgb&w=800`).
-  **Solo comida**, nada de interiores/venue/gente (ids: 958545 feature, 2983101,
-  1600711, 1279330, 1108117, 806361).
+- Galería (`images/gallery/`, **fotos reales locales**, 7 sep→17 sep 2026): ya
+  NO son hotlinks de Pexels. Vienen del Google Drive real del restaurante
+  (shooting de menú de Simon Rancourt, feb 2024) — `combo.jpg` (burger+frites en
+  canasta con branding), `pizza.jpg` (pain plat), `scallops.jpg` (pétoncles).
+  Solo comida, nada de interiores/venue/gente.
 - `loading="lazy"` en todas las imágenes de galería.
-- **Antes de desplegar a Hostinger:** descargar las fotos de Pexels a `images/`
-  local y cambiar los `src`, para no depender de Pexels en producción. Los logos
-  ya son locales.
+- Ya no hay dependencia de Pexels en ninguna sección — todo local.
 
 ## 15. Panel de administración (`admin.html`)
 
@@ -443,17 +442,30 @@ tarjetas (features, menú, testimonios, ubicación, footer).
   (copia todos los archivos del proyecto, incluido este `.md`).
 - El primer snapshot (`...-00-pristine-gemini`) es la versión original intacta.
 
-## 19. Menú (3 platillos con foto), testimonios y video de hero
+## 19. Menú (5 platillos con foto real), testimonios y video de hero
 
-- **Menú** (`products[]` en `script.js`): 3 platillos reales con foto (el cliente
-  subió PNGs a `~/Downloads/stanley/platillos/`, redimensionadas a `images/menu/`
-  a 520px, ~280KB c/u):
-  - `burger.png` — "The Overtime Burger"
-  - `wings.png` — "Power-Play Wings"
-  - `tartare.png` — "Centre-Ice Tartare"
-  Cada item: `{ id, name, desc, price, img, icon }`. `renderMenu()` arma
-  `.menu-item-photo` (`aspect-ratio 4/3`, `object-fit: contain`) + `.menu-item-body`.
-  El `icon` (emoji) se conserva solo para la mini-vista del carrito.
+- **Menú (`products[]` en `script.js`) — fotos REALES del restaurante (17 sep
+  2026).** El cliente compartió su Google Drive con años de contenido; dentro
+  de `nuevo menu 2024 fotos/` había un shooting profesional (Simon Rancourt,
+  feb 2024) con las fotos reales de los platillos, fondo blanco. Se
+  reemplazaron las 5 fotos anteriores (genéricas, generadas) por estas y se
+  renombraron los platillos para que coincidan con lo fotografiado — `images/menu/`:
+  - `burger-real.jpg` — "Le burger prolongation" (18,00 $)
+  - `ribs.jpg` — "Côtes levées mise en échec" (21,00 $)
+  - `poke-bowl.jpg` — "Le bol du gardien" (thon mi-cuit, 17,00 $)
+  - `penne.jpg` — "Les penne du capitaine" (crevettes et poulet, 18,50 $)
+  - `skewers.jpg` — "La brochette du défenseur" (19,00 $)
+  JPG (no PNG) porque son fotos con degradés — comprime mejor. Redimensionadas
+  a 900px de ancho con `sips`, ~90–195 KB c/u. Cada item sigue siendo
+  `{ id, name, desc, price, img, icon }`. `renderMenu()` arma `.menu-item-photo`
+  (`aspect-ratio 4/3`, `object-fit: contain`) + `.menu-item-body`. El `icon`
+  (emoji) se conserva solo para la mini-vista del carrito.
+- **Cómo se obtuvieron:** conector de Google Drive (MCP) — el cliente compartió
+  el link de carpeta, se buscó `parentId = '<folder>'` y se bajaron los JPG con
+  `download_file_content` (límite: **10 MB por archivo** en este conector; los
+  más pesados del shooting, >10MB, no se pudieron traer — para esos habría que
+  pedir el original directo o exportarlo más liviano). Los que sí bajaron se
+  revisaron en un contact-sheet (Pillow) antes de elegir cuáles usar.
 - **Testimonios:** avatares reales (`images/avatars/rev-1..3.jpg`, 400×400, del
   folder `~/Downloads/Avatares `). `.testimonial-avatar` pasó de círculo con
   iniciales a `<img>` `object-fit: cover` 48px. Se **quitó `.reveal` de las

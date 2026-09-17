@@ -2,47 +2,47 @@
 let cart = JSON.parse(localStorage.getItem('brasserie_cart')) || [];
 let user = JSON.parse(localStorage.getItem('brasserie_user')) || null;
 
-// Menu — les plats à emporter
+// Menu — les vrais plats de la maison (photos du shooting menu 2024)
 const products = [
     {
         id: 1,
         name: "Le burger prolongation",
         desc: "Double galette smash, cheddar vieilli, confit de bacon, laitue croquante, tomate et oignon rouge. Frites coupées à la main.",
         price: 18.00,
-        img: "images/menu/burger.png",
+        img: "images/menu/burger-real.jpg",
         icon: "🍔"
     },
     {
         id: 2,
-        name: "Ailes en avantage numérique",
-        desc: "Une douzaine d'ailes croustillantes glacées au BBQ miel-piquant, avec ranch maison pour tremper.",
-        price: 15.50,
-        img: "images/menu/wings.png",
-        icon: "🍗"
+        name: "Côtes levées mise en échec",
+        desc: "Demi-carré de côtes levées fumées, glacées BBQ maison, servies avec frites maison et salade de chou crémeuse.",
+        price: 21.00,
+        img: "images/menu/ribs.jpg",
+        icon: "🍖"
     },
     {
         id: 3,
-        name: "Tartare centre de la glace",
-        desc: "Saumon et thon en dés, concombre, menthe fraîche, amandes grillées et yogourt lime et herbes.",
-        price: 16.00,
-        img: "images/menu/tartare.png",
+        name: "Le bol du gardien",
+        desc: "Thon mi-cuit en croûte de sésame sur riz, edamames, carottes marinées et pickles maison.",
+        price: 17.00,
+        img: "images/menu/poke-bowl.jpg",
         icon: "🐟"
     },
     {
         id: 4,
-        name: "César mise au jeu",
-        desc: "Poulet frit croustillant sur romaine, parmesan en copeaux, morceaux de bacon, croûtons et vinaigrette César maison.",
-        price: 16.50,
-        img: "images/menu/chicken-caesar.png",
-        icon: "🥗"
+        name: "Les penne du capitaine",
+        desc: "Penne aux crevettes et au poulet, sauce rosée, poivrons grillés et parmesan, pain à l'ail sur le côté.",
+        price: 18.50,
+        img: "images/menu/penne.jpg",
+        icon: "🍝"
     },
     {
         id: 5,
-        name: "Crevettes lancer frappé",
-        desc: "Crevettes au beurre à l'ail sur riz aux herbes, rehaussées de citron et de persil.",
+        name: "La brochette du défenseur",
+        desc: "Brochette de poulet et légumes grillés, riz pilaf et salade César.",
         price: 19.00,
-        img: "images/menu/shrimp-rice.png",
-        icon: "🍤"
+        img: "images/menu/skewers.jpg",
+        icon: "🍢"
     }
 ];
 
