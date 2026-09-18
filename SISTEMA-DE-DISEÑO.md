@@ -475,9 +475,20 @@ tarjetas (features, menú, testimonios, ubicación, footer).
   tarjetas blancas → `h3`/`price`/quotes invisibles. Fix:
   `.section--crayon .menu-item, .section--crayon .testimonial-card { color: var(--text-color) }`.
 - **Video de fondo del hero:** `<video class="hero-video" autoplay muted loop
-  playsinline poster="video/hero-burgers-poster.jpg">` + `.hero-overlay`
-  (gradiente oscuro `rgba(18,11,6,.55→.72)` + tinte naranja 12%). Fuente: Pexels
-  video 37296040 (burgers en plancha), descargado y comprimido con ffmpeg a
-  `video/hero-burgers.mp4` (720p, sin audio, ~2.1MB). El hero ahora es
+  playsinline poster="video/hero-saint-tite-poster.jpg">` + `.hero-overlay`
+  (gradiente oscuro `rgba(18,11,6,.55→.72)` + tinte naranja 12%). El hero es
   `position: relative; color: #fff; background: var(--text-color)` (fallback);
   `h1` blanco (span naranja), `p` blanco 90%, botón secundario pill blanco.
+- **Video REAL (18 sep 2026), reemplazó el de Pexels.** Viene del mismo Google
+  Drive del cliente (`Publicaciones/2026-09-02-004735013.mp4`, 47MB, vertical
+  1080×1920 — pesa más de los 10MB que el conector puede bajar, así que el
+  cliente lo descargó él mismo desde Drive y lo dejó en `~/Downloads/`). Es
+  contenido de un festival (Festival Western de Saint-Tite) con look vintage
+  (grano/rayas superpuestas): abre con el banner de marca "Chez Stanley", luego
+  parrilla en vivo, corte de carne y camarones salteados.
+  - Recorte con `ffmpeg`: segundo **7.0 a 12.1** del original (el tramo con
+    comida + banner de marca, antes del corte a negro), `crop=1080:960:0:480`
+    (recorte centrado, quita 480px arriba/abajo de los 1920 originales) →
+    `scale=960:-2`, sin audio, H.264, `video/hero-saint-tite.mp4` (~1MB).
+  - Poster: frame de los camarones, `video/hero-saint-tite-poster.jpg`.
+  - Se borraron `hero-burgers.mp4` / `hero-burgers-poster.jpg` (Pexels).
