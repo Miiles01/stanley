@@ -479,6 +479,19 @@ tarjetas (features, menú, testimonios, ubicación, footer).
   `{ id, name, desc, price, img, icon }`. `renderMenu()` arma `.menu-item-photo`
   (`aspect-ratio 4/3`, `object-fit: contain`) + `.menu-item-body`. El `icon`
   (emoji) se conserva solo para la mini-vista del carrito.
+  - ⚠️ **`burger-real.jpg` re-recortada (18 sep 2026):** el primer recorte
+    dejaba la hamburguesa pegada a la izquierda con medio frame de espacio
+    blanco a la derecha — con `object-fit:contain` eso se ve descentrado
+    aunque el CSS técnicamente centre la imagen completa (el sujeto dentro de
+    la foto no estaba centrado). Fix: se recortó de nuevo desde el original
+    (`scratchpad/drive-raw/simon-03.jpg`, 5030×3353) con `ffmpeg crop`
+    centrado en el bounding box real de la hamburguesa (detectado con un
+    script Python que escanea píxeles no-blancos), dejando padding simétrico
+    en los 4 lados → ahora el sujeto queda centrado dentro del archivo mismo,
+    así que `contain` lo centra de verdad. **Lección:** si `object-fit:contain`
+    se ve descentrado, el problema casi siempre es que el sujeto no está
+    centrado DENTRO de la foto — hay que recortar la fuente, no la técnica de
+    CSS. `?v=2` en la referencia de `script.js` para el cache-bust.
 - **Cómo se obtuvieron:** conector de Google Drive (MCP) — el cliente compartió
   el link de carpeta, se buscó `parentId = '<folder>'` y se bajaron los JPG con
   `download_file_content` (límite: **10 MB por archivo** en este conector; los
@@ -521,11 +534,16 @@ tarjetas (features, menú, testimonios, ubicación, footer).
     `.about-video` (`aspect-ratio: 9/16`, `border-radius:24px`,
     `object-fit:cover`). Mobile/tablet angosto: apilado, video arriba,
     `max-width:360px` centrado. **≥768px (tablet y desktop): fila, video a la
-    DERECHA** vía `order:2` en `.about-video` / `order:1` en `.features-grid`
-    dentro de `.about-layout { flex-direction:row }` — el HTML no cambia de
-    orden, solo el CSS.
+    IZQUIERDA** vía `order:1` en `.about-video` / `order:2` en
+    `.features-grid` dentro de `.about-layout { flex-direction:row }` — el
+    HTML no cambia de orden, solo el CSS. (Primero se puso a la derecha,
+    el usuario pidió cambiarlo a la izquierda el mismo día.)
   - Se borraron `hero-burgers.mp4` / `hero-burgers-poster.jpg` (Pexels, ya no
     se usan) y el `hero-video` original (Pexels) tampoco existe más.
+  - **Iconos en `.feature-card`:** cada tarjeta lleva un `.feature-icon` (emoji,
+    `font-size:2rem`, antes del `h3`) — 🍺 microbrasserie, 🍗 ailes, 🏆 fidélité.
+    Mismo patrón que los emoji de `products[]`/`SAMPLE_PRODUCTS` (icono para
+    UI rápida, no imagen).
 
 ## 20. Sección "Reopening" — anuncio de reapertura (18 sep 2026)
 
@@ -538,11 +556,17 @@ tarjetas (features, menú, testimonios, ubicación, footer).
   el footer), texto centrado. `.reopening-badge` = pill naranja mayúsculas
   ("Ouverture bientôt"). `h2` blanco ("Chez Stanley fait peau neuve"), `p`
   blanco 85% explicando la demolición/reconstrucción.
-- `.reopening-gallery`: grid `2fr 1fr` (la primera imagen —la toma exterior
-  amplia— más grande; la segunda —la entrada— más chica), `gap:16px`,
-  `border-radius:24px` por item, `aspect-ratio:16/10`. En móvil
-  (`max-width:768px`) colapsa a 1 columna (apiladas). Ambas llevan `.reveal`
-  (anima solo desktop/tablet, ver §12.3).
+- **`.reopening-gallery` es un carrusel de scroll horizontal** (el usuario lo
+  pidió explícitamente — no grid estático): `display:flex; overflow-x:auto;
+  scroll-snap-type:x mandatory;` + `scrollbar-width:none` /
+  `::-webkit-scrollbar{display:none}` (scrollbar oculto). Cada
+  `.reopening-item { scroll-snap-align:start; flex:0 0 82% }` en móvil (deja
+  "peek" del siguiente slide, invita a swipear); `≥768px` pasa a
+  `flex-basis:46%` (`58%` la `--feature`) para que se vean ~2 a la vez.
+  `border-radius:24px`, `aspect-ratio:16/10`. Ambas llevan `.reveal` (anima
+  solo desktop/tablet, ver §12.3). El scroll usa el nativo del navegador
+  (`overflow-x:auto`), no ScrollSmoother — son ejes distintos (x vs y), no
+  hay conflicto.
 - Imágenes: `images/reopening/exterior-night.jpg` + `entrance-night.jpg`
   (convertidas de los PNG que compartió el cliente — `~/Downloads/resto1.png`
   / `resto2.png` — con `sips`, ~1600px de ancho, JPG calidad 85, ~230-310KB).

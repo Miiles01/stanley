@@ -9,7 +9,7 @@ const products = [
         name: "Le burger prolongation",
         desc: "Double galette smash, cheddar vieilli, confit de bacon, laitue croquante, tomate et oignon rouge. Frites coupées à la main.",
         price: 18.00,
-        img: "images/menu/burger-real.jpg",
+        img: "images/menu/burger-real.jpg?v=2",
         icon: "🍔"
     },
     {
