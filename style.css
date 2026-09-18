@@ -37,6 +37,15 @@ html.gsap .text {
     opacity: 0;
 }
 
+/* .reveal (cards/media) only animates on desktop/tablet — see initAnimations().
+   Hiding it pre-JS only above the same breakpoint means mobile never risks a
+   stuck-invisible card if the tween is skipped there. */
+@media (min-width: 769px) {
+    html.gsap .reveal {
+        opacity: 0;
+    }
+}
+
 body {
     font-family: var(--font-main);
     background-color: var(--bg-color);
@@ -342,17 +351,15 @@ a.nav-brand {
     justify-content: center;
     text-align: center;
     padding: 0 5%;
-    background-color: var(--text-color); /* fallback if the video/poster fail */
+    background-color: var(--text-color); /* fallback if the photo fails */
     color: #fff;
 }
 
-.hero-video {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0;
+/* Static photo background — the real video moved to #about (§19) */
+.hero--photo {
+    background-image: url("video/hero-saint-tite-poster.jpg?v=1");
+    background-size: cover;
+    background-position: center;
 }
 
 .hero-overlay {
@@ -421,10 +428,56 @@ section {
     text-align: center;
 }
 
+/* Real kitchen footage — lives here, not in the hero (see §19).
+   Mobile/tablet-stacked: video sits above the cards, full width.
+   Desktop (>=1024px): two columns, video on the RIGHT (flex order). */
+.about-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.about-video {
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    aspect-ratio: 9 / 16;
+    border-radius: 24px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.about-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
 .features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 40px;
+}
+
+/* Desktop AND tablet — video on the right */
+@media (min-width: 768px) {
+    .about-layout {
+        flex-direction: row;
+        align-items: stretch;
+        gap: 40px;
+    }
+    .about-video {
+        order: 2;
+        max-width: 300px;
+        margin: 0;
+    }
+    .features-grid {
+        order: 1;
+        flex: 1;
+        grid-template-columns: 1fr;
+        align-content: center;
+    }
 }
 
 .feature-card {

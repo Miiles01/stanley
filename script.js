@@ -456,9 +456,11 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 // them in on scroll with fromTo (explicit start + end, no snapshot guesswork).
 // .text   -> headings (h1/h2/h3): word-by-word reveal
 // .line   -> paragraphs / descriptions: rise + fade, staggered per on-screen group
-// (cards & media just render — no entrance animation, it stuttered on mobile)
+// .reveal -> cards & media: fade + rise on scroll — DESKTOP/TABLET ONLY (>768px).
+//            Skipped on phones on purpose (it stuttered there); mobile just renders them.
 function initAnimations() {
     const root = document.documentElement;
+    const isMobile = window.innerWidth <= 768;
 
     // GSAP unavailable -> drop the hide class so everything is simply visible
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
@@ -467,10 +469,8 @@ function initAnimations() {
     }
     gsap.registerPlugin(ScrollTrigger);
 
-    // Page-wide smooth scrolling (momentum) — desktop/tablet only.
-    // On phones (<=768px) ScrollSmoother + normalizeScroll hijacks touch
-    // scrolling and stutters, so we let the browser scroll natively there.
-    if (typeof ScrollSmoother !== 'undefined' && window.innerWidth > 768) {
+    // Page-wide smooth scrolling (momentum), all breakpoints.
+    if (typeof ScrollSmoother !== 'undefined') {
         gsap.registerPlugin(ScrollSmoother);
         smoother = ScrollSmoother.create({
             wrapper: '#smooth-wrapper',
@@ -513,11 +513,23 @@ function initAnimations() {
         )
     });
 
+    // .reveal (cards & media) — desktop/tablet only, omitted on mobile.
+    if (!isMobile) {
+        ScrollTrigger.batch('.reveal', {
+            start: 'top 90%',
+            once: true,
+            onEnter: batch => gsap.fromTo(batch,
+                { opacity: 0, y: 24 },
+                { opacity: 1, y: 0, stagger: 0.12, duration: 0.7, ease: 'power2.out', overwrite: true }
+            )
+        });
+    }
+
     // Failsafe: reveal anything that is on screen but still hidden a few seconds
     // after load (e.g. a stalled tween in a throttled tab). Off-screen elements
     // are left alone so their scroll animation still plays.
     setTimeout(() => {
-        document.querySelectorAll('.line, .text').forEach(el => {
+        document.querySelectorAll('.line, .text, .reveal').forEach(el => {
             const r = el.getBoundingClientRect();
             const onScreen = r.top < window.innerHeight && r.bottom > 0;
             if (onScreen && parseFloat(getComputedStyle(el).opacity) < 0.95) {

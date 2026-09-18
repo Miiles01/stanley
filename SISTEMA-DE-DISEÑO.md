@@ -230,25 +230,40 @@ gsap.from(".line", {
 Se aplica a: párrafo del hero, `.section-lead` de cada sección, y los `<p>` de
 tarjetas (features, menú, testimonios, ubicación, footer).
 
-### 12.3 `.reveal` — tarjetas y media: SIN animación de entrada
+### 12.3 `.reveal` — tarjetas y media: DESKTOP/TABLET solamente
 
-- **Las tarjetas y las imágenes NO animan.** Se quitó el fade-in `.reveal`
-  (7 sep 2026) porque en móvil hacía que la página se sintiera trabada.
-- La clase `.reveal` sigue en el markup (feature cards, gallery, menu items)
-  pero ya **no hace nada**: no está en la regla `html.gsap { opacity: 0 }` ni
-  hay `ScrollTrigger.batch('.reveal')`. Renderizan a opacidad 1 de una.
-- Si algún día se re-activa, era: `gsap.fromTo('.reveal', {opacity:0, y:24},
-  {opacity:1, y:0, stagger:0.12, duration:0.7, ease:'power2.out'})` vía batch.
+- **Las tarjetas y media animan (fade + rise) solo en pantallas > 768px.** Se
+  había quitado por completo el 7 sep 2026 (trababa el móvil); el 18 sep 2026
+  se reactivó pero **a propósito nunca en móvil** — ahí las tarjetas siempre
+  renderizan a opacidad 1 de una, sin animación ni riesgo de quedar pegadas.
+- CSS: la regla que las esconde antes de que GSAP corra también está gateada
+  por breakpoint —
+  `@media (min-width:769px) { html.gsap .reveal { opacity: 0 } }` — así en
+  móvil `.reveal` nunca se oculta, ni siquiera un instante.
+- JS: en `initAnimations()`, `const isMobile = window.innerWidth <= 768;` y el
+  `ScrollTrigger.batch('.reveal', …)` va dentro de `if (!isMobile) { … }`.
+  Fuera de ese if, en móvil, no corre nada — coherente con el CSS de arriba.
+  ```js
+  if (!isMobile) {
+    ScrollTrigger.batch('.reveal', {
+      start: 'top 90%', once: true,
+      onEnter: batch => gsap.fromTo(batch, {opacity:0,y:24},
+        {opacity:1,y:0,stagger:0.12,duration:0.7,ease:'power2.out',overwrite:true})
+    });
+  }
+  ```
+- Aplicado a: `.feature-card`, `.about-video`, `.gallery-item`. (`.menu-item`,
+  `.testimonial-card` NO llevan `.reveal` — ver §19.)
 
 ### 12.4 Reglas de animación
 
 - Clases `.text` y `.line` = **solo** marcan qué anima. No llevan estilos.
-- Nuevas secciones: `.text` en títulos, `.line` en párrafos. Tarjetas/imágenes
-  NO se animan.
-- No animar: tarjetas, imágenes, logos (navbar/footer), iconos, badges, precios,
-  controles.
+  `.reveal` además solo anima ≥769px (ver 12.3).
+- Nuevas secciones: `.text` en títulos, `.line` en párrafos, `.reveal` en
+  tarjetas/media que SÍ deban animar en desktop.
+- No animar nunca: logos (navbar/footer), iconos, badges, precios, controles.
 - `ease` estándar del proyecto: `power2.out`.
-- El failsafe de 4s en `initAnimations()` cubre `.text` y `.line`:
+- El failsafe de 4s en `initAnimations()` cubre `.text`, `.line` y `.reveal`:
   si un tween se cuelga, revela lo que quedó con `opacity < 0.95`.
 
 ## 13. Scroll — GSAP ScrollSmoother
@@ -256,10 +271,13 @@ tarjetas (features, menú, testimonios, ubicación, footer).
 - **Smooth scroll de toda la página** con
   [`ScrollSmoother`](https://gsap.com/docs/v3/Plugins/ScrollSmoother/) (plugin
   GSAP, gratis desde 3.13). Da inercia/momentum al scroll.
-- **Solo desktop/tablet (`window.innerWidth > 768`).** En móvil ScrollSmoother +
-  `normalizeScroll` secuestra el scroll táctil y se traba → en móvil se usa el
-  scroll nativo del navegador (7 sep 2026). Los anchors internos en móvil caen
-  a `fallbackScrollTo` (rAF) + `scroll-behavior: smooth` de CSS.
+- **En TODOS los breakpoints, incluido móvil** (18 sep 2026 — el usuario pidió
+  "mete smooth scroll"; había estado restringido a desktop/tablet desde el
+  7 sep por jank en móvil, pero esa jank venía sobre todo de los filtros SVG
+  `feTurbulence` en vivo — ya horneados a PNG — y del `.reveal` en todas las
+  tarjetas — ya limitado a desktop). Si vuelve a sentirse trabado en un
+  teléfono real, el fix es re-agregar el guard `window.innerWidth > 768` a la
+  creación de `ScrollSmoother` en `initAnimations()`.
 - `effects: false` — ya no hay elementos con `data-speed`/`data-lag`.
 - **Estructura DOM obligatoria** (en `index.html`):
   ```
@@ -279,7 +297,7 @@ tarjetas (features, menú, testimonios, ubicación, footer).
   El contenido dentro de `#smooth-content` se transforma → **`position: sticky`
   NO funciona ahí dentro**. Por eso navbar y modales van fuera, con
   `position: fixed`. El footer sí va dentro (es un bloque normal en el flujo).
-- Init en `initAnimations()` (dentro del guard `window.innerWidth > 768`):
+- Init en `initAnimations()` (sin guard de ancho — corre en todos los breakpoints):
   ```js
   ScrollSmoother.create({
     wrapper: '#smooth-wrapper', content: '#smooth-content',
@@ -474,21 +492,36 @@ tarjetas (features, menú, testimonios, ubicación, footer).
 - ⚠️ **Bug corregido:** `.section--crayon { color: #fff }` se heredaba a las
   tarjetas blancas → `h3`/`price`/quotes invisibles. Fix:
   `.section--crayon .menu-item, .section--crayon .testimonial-card { color: var(--text-color) }`.
-- **Video de fondo del hero:** `<video class="hero-video" autoplay muted loop
-  playsinline poster="video/hero-saint-tite-poster.jpg">` + `.hero-overlay`
-  (gradiente oscuro `rgba(18,11,6,.55→.72)` + tinte naranja 12%). El hero es
-  `position: relative; color: #fff; background: var(--text-color)` (fallback);
-  `h1` blanco (span naranja), `p` blanco 90%, botón secundario pill blanco.
-- **Video REAL (18 sep 2026), reemplazó el de Pexels.** Viene del mismo Google
-  Drive del cliente (`Publicaciones/2026-09-02-004735013.mp4`, 47MB, vertical
-  1080×1920 — pesa más de los 10MB que el conector puede bajar, así que el
-  cliente lo descargó él mismo desde Drive y lo dejó en `~/Downloads/`). Es
-  contenido de un festival (Festival Western de Saint-Tite) con look vintage
-  (grano/rayas superpuestas): abre con el banner de marca "Chez Stanley", luego
-  parrilla en vivo, corte de carne y camarones salteados.
+- **Hero — foto estática, ya NO video (18 sep 2026).** El video se movió a
+  `#about` (ver abajo). `.hero.hero--photo { background-image:
+  url("video/hero-saint-tite-poster.jpg"); background-size:cover;
+  background-position:center }` + `.hero-overlay` (gradiente oscuro
+  `rgba(18,11,6,.55→.72)` + tinte naranja 12%) sigue igual. `h1` blanco (span
+  naranja), `p` blanco 90%, botón secundario pill blanco.
+- **Video REAL en `#about` — "Pourquoi nous choisir ?" (18 sep 2026).** Viene
+  del Google Drive del cliente (`Publicaciones/2026-09-02-004735013.mp4`,
+  47MB, vertical 1080×1920 — pesa más de los 10MB que el conector puede bajar,
+  así que el cliente lo descargó él mismo desde Drive y lo dejó en
+  `~/Downloads/`). Es contenido de un festival (Festival Western de
+  Saint-Tite) con look vintage (grano/rayas superpuestas): abre con el banner
+  de marca "Chez Stanley", luego parrilla en vivo, corte de carne y camarones
+  salteados.
   - Recorte con `ffmpeg`: segundo **7.0 a 12.1** del original (el tramo con
-    comida + banner de marca, antes del corte a negro), `crop=1080:960:0:480`
-    (recorte centrado, quita 480px arriba/abajo de los 1920 originales) →
-    `scale=960:-2`, sin audio, H.264, `video/hero-saint-tite.mp4` (~1MB).
-  - Poster: frame de los camarones, `video/hero-saint-tite-poster.jpg`.
-  - Se borraron `hero-burgers.mp4` / `hero-burgers-poster.jpg` (Pexels).
+    comida + banner de marca, antes de un corte a negro), **sin recortar el
+    encuadre vertical** (`scale=720:-2`, mantiene el 9:16 original) — primero
+    se probó un crop horizontal para el hero, pero el cliente pidió que el
+    video se viera **vertical**, así que se re-renderizó desde el original sin
+    `crop`. Sin audio, H.264, `video/about-saint-tite.mp4` (~1MB).
+  - El poster (`video/hero-saint-tite-poster.jpg`, frame de los camarones,
+    del recorte horizontal viejo) quedó reutilizado como fondo estático del
+    hero — no se volvió a generar.
+  - **Layout de `#about` (`.about-layout`):** columna de texto (`h2` +
+    `.features-grid`, 1 sola columna cuando comparte fila con el video) +
+    `.about-video` (`aspect-ratio: 9/16`, `border-radius:24px`,
+    `object-fit:cover`). Mobile/tablet angosto: apilado, video arriba,
+    `max-width:360px` centrado. **≥768px (tablet y desktop): fila, video a la
+    DERECHA** vía `order:2` en `.about-video` / `order:1` en `.features-grid`
+    dentro de `.about-layout { flex-direction:row }` — el HTML no cambia de
+    orden, solo el CSS.
+  - Se borraron `hero-burgers.mp4` / `hero-burgers-poster.jpg` (Pexels, ya no
+    se usan) y el `hero-video` original (Pexels) tampoco existe más.

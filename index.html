@@ -6,7 +6,7 @@
     <title>Chez Stanley — Resto-bar sportif</title>
     <!-- Mark JS on before first paint so animatable elements start hidden (no flash). -->
     <script>document.documentElement.classList.add('gsap');</script>
-    <link rel="stylesheet" href="style.css?v=48">
+    <link rel="stylesheet" href="style.css?v=50">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Ultra&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -40,11 +40,8 @@
     <div id="smooth-wrapper">
     <div id="smooth-content">
 
-    <!-- Hero Section -->
-    <header class="hero">
-        <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="video/hero-saint-tite-poster.jpg?v=1" aria-hidden="true">
-            <source src="video/hero-saint-tite.mp4?v=1" type="video/mp4" />
-        </video>
+    <!-- Hero Section — static image (the real video lives in #about now) -->
+    <header class="hero hero--photo">
         <div class="hero-overlay" aria-hidden="true"></div>
         <div class="hero-content">
             <h1 class="text">L'ultime <span>soirée de match</span></h1>
@@ -60,18 +57,25 @@
     <section id="about" class="about-section">
         <div class="about-container">
             <h2 class="text">Pourquoi nous choisir ?</h2>
-            <div class="features-grid">
-                <div class="feature-card reveal">
-                    <h3 class="text">Bière de microbrasserie</h3>
-                    <p class="line">On déniche les meilleures bières d'ici pour accompagner ton repas à la perfection.</p>
+            <div class="about-layout">
+                <div class="about-video reveal">
+                    <video autoplay muted loop playsinline aria-hidden="true">
+                        <source src="video/about-saint-tite.mp4?v=1" type="video/mp4" />
+                    </video>
                 </div>
-                <div class="feature-card reveal">
-                    <h3 class="text">Ailes signature</h3>
-                    <p class="line">Nos ailes sont légendaires. Enrobées de sauces maison qui ont du punch.</p>
-                </div>
-                <div class="feature-card reveal">
-                    <h3 class="text">Programme de fidélité</h3>
-                    <p class="line">Accumule des points à chaque commande et débloque des rabais exclusifs.</p>
+                <div class="features-grid">
+                    <div class="feature-card reveal">
+                        <h3 class="text">Bière de microbrasserie</h3>
+                        <p class="line">On déniche les meilleures bières d'ici pour accompagner ton repas à la perfection.</p>
+                    </div>
+                    <div class="feature-card reveal">
+                        <h3 class="text">Ailes signature</h3>
+                        <p class="line">Nos ailes sont légendaires. Enrobées de sauces maison qui ont du punch.</p>
+                    </div>
+                    <div class="feature-card reveal">
+                        <h3 class="text">Programme de fidélité</h3>
+                        <p class="line">Accumule des points à chaque commande et débloque des rabais exclusifs.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -320,6 +324,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
     <script src="store.js?v=15"></script>
-    <script src="script.js?v=35"></script>
+    <script src="script.js?v=36"></script>
 </body>
 </html>
