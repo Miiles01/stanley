@@ -6,7 +6,7 @@
     <title>Chez Stanley — Resto-bar sportif</title>
     <!-- Mark JS on before first paint so animatable elements start hidden (no flash). -->
     <script>document.documentElement.classList.add('gsap');</script>
-    <link rel="stylesheet" href="style.css?v=52">
+    <link rel="stylesheet" href="style.css?v=53">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Ultra&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -82,17 +82,35 @@
                 </div>
                 <div class="features-grid">
                     <div class="feature-card reveal">
-                        <div class="feature-icon" aria-hidden="true">🍺</div>
+                        <div class="feature-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 8h11v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8Z" />
+                                <path d="M16 10.5h1.5a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H16" />
+                                <path d="M8 8V5.5A1.5 1.5 0 0 1 9.5 4H11" />
+                            </svg>
+                        </div>
                         <h3 class="text">Bière de microbrasserie</h3>
                         <p class="line">On déniche les meilleures bières d'ici pour accompagner ton repas à la perfection.</p>
                     </div>
                     <div class="feature-card reveal">
-                        <div class="feature-icon" aria-hidden="true">🍗</div>
+                        <div class="feature-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2.5c1 2.6-1.8 3.7-1.8 6.3a2.8 2.8 0 0 0 5.6 0c0-1-.6-1.8-1-2.5.6.8 1.2 1.8 1.2 3a4.2 4.2 0 1 1-8.4 0c0-3.2 2.7-4 4.4-6.8Z" />
+                            </svg>
+                        </div>
                         <h3 class="text">Ailes signature</h3>
                         <p class="line">Nos ailes sont légendaires. Enrobées de sauces maison qui ont du punch.</p>
                     </div>
                     <div class="feature-card reveal">
-                        <div class="feature-icon" aria-hidden="true">🏆</div>
+                        <div class="feature-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M7 4h10v4a5 5 0 0 1-10 0V4Z" />
+                                <path d="M7 5H4.5a1.5 1.5 0 0 0 0 3H6M17 5h2.5a1.5 1.5 0 0 1 0 3H18" />
+                                <path d="M12 13v3.5" />
+                                <path d="M9 20.5h6" />
+                                <path d="M9.8 16.5h4.4l.4 4H9.4l.4-4Z" />
+                            </svg>
+                        </div>
                         <h3 class="text">Programme de fidélité</h3>
                         <p class="line">Accumule des points à chaque commande et débloque des rabais exclusifs.</p>
                     </div>
@@ -344,6 +362,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
     <script src="store.js?v=15"></script>
-    <script src="script.js?v=37"></script>
+    <script src="script.js?v=38"></script>
 </body>
 </html>

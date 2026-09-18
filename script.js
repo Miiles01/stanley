@@ -9,7 +9,7 @@ const products = [
         name: "Le burger prolongation",
         desc: "Double galette smash, cheddar vieilli, confit de bacon, laitue croquante, tomate et oignon rouge. Frites coupées à la main.",
         price: 18.00,
-        img: "images/menu/burger-real.jpg?v=2",
+        img: "images/menu/burger-real.jpg?v=3",
         icon: "🍔"
     },
     {
@@ -17,7 +17,7 @@ const products = [
         name: "Côtes levées mise en échec",
         desc: "Demi-carré de côtes levées fumées, glacées BBQ maison, servies avec frites maison et salade de chou crémeuse.",
         price: 21.00,
-        img: "images/menu/ribs.jpg",
+        img: "images/menu/ribs.jpg?v=2",
         icon: "🍖"
     },
     {
@@ -25,7 +25,7 @@ const products = [
         name: "Le bol du gardien",
         desc: "Thon mi-cuit en croûte de sésame sur riz, edamames, carottes marinées et pickles maison.",
         price: 17.00,
-        img: "images/menu/poke-bowl.jpg",
+        img: "images/menu/poke-bowl.jpg?v=2",
         icon: "🐟"
     },
     {
@@ -33,7 +33,7 @@ const products = [
         name: "Les penne du capitaine",
         desc: "Penne aux crevettes et au poulet, sauce rosée, poivrons grillés et parmesan, pain à l'ail sur le côté.",
         price: 18.50,
-        img: "images/menu/penne.jpg",
+        img: "images/menu/penne.jpg?v=2",
         icon: "🍝"
     },
     {
@@ -41,7 +41,7 @@ const products = [
         name: "La brochette du défenseur",
         desc: "Brochette de poulet et légumes grillés, riz pilaf et salade César.",
         price: 19.00,
-        img: "images/menu/skewers.jpg",
+        img: "images/menu/skewers.jpg?v=2",
         icon: "🍢"
     }
 ];

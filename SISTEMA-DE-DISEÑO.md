@@ -474,30 +474,54 @@ tarjetas (features, menú, testimonios, ubicación, footer).
   - `poke-bowl.jpg` — "Le bol du gardien" (thon mi-cuit, 17,00 $)
   - `penne.jpg` — "Les penne du capitaine" (crevettes et poulet, 18,50 $)
   - `skewers.jpg` — "La brochette du défenseur" (19,00 $)
-  JPG (no PNG) porque son fotos con degradés — comprime mejor. Redimensionadas
-  a 900px de ancho con `sips`, ~90–195 KB c/u. Cada item sigue siendo
-  `{ id, name, desc, price, img, icon }`. `renderMenu()` arma `.menu-item-photo`
-  (`aspect-ratio 4/3`, `object-fit: contain`) + `.menu-item-body`. El `icon`
-  (emoji) se conserva solo para la mini-vista del carrito.
-  - ⚠️ **`burger-real.jpg` re-recortada (18 sep 2026):** el primer recorte
-    dejaba la hamburguesa pegada a la izquierda con medio frame de espacio
-    blanco a la derecha — con `object-fit:contain` eso se ve descentrado
-    aunque el CSS técnicamente centre la imagen completa (el sujeto dentro de
-    la foto no estaba centrado). Fix: se recortó de nuevo desde el original
-    (`scratchpad/drive-raw/simon-03.jpg`, 5030×3353) con `ffmpeg crop`
-    centrado en el bounding box real de la hamburguesa (detectado con un
-    script Python que escanea píxeles no-blancos), dejando padding simétrico
-    en los 4 lados → ahora el sujeto queda centrado dentro del archivo mismo,
-    así que `contain` lo centra de verdad. **Lección:** si `object-fit:contain`
-    se ve descentrado, el problema casi siempre es que el sujeto no está
-    centrado DENTRO de la foto — hay que recortar la fuente, no la técnica de
-    CSS. `?v=2` en la referencia de `script.js` para el cache-bust.
+  JPG (no PNG) porque son fotos con degradés — comprime mejor. Cada item sigue
+  siendo `{ id, name, desc, price, img, icon }`. `renderMenu()` arma
+  `.menu-item-photo` (`aspect-ratio 4/3`, `object-fit: contain`) +
+  `.menu-item-body`. El `icon` (emoji) se conserva solo para la mini-vista del
+  carrito.
+  - ⚠️ **Las 5 fotos se re-recortaron TODAS a 4:3 (18 sep 2026, `?v=2`/`?v=3`
+    en `script.js`), con el mismo método, para que se vean del mismo "tamaño"
+    en el carrusel.** Historia: primero solo la burger se recortó (para
+    centrarla — venía con medio frame de espacio blanco a la derecha), pero
+    quedó en **retrato** (700×914) mientras las otras 4 seguían siendo el
+    frame completo sin recortar (900×600, paisaje 3:2). Con
+    `object-fit:contain` en una caja `4:3`, una imagen en retrato se ajusta
+    por ALTURA (llena la caja de arriba a abajo) mientras una en paisaje 3:2
+    se ajusta por ANCHO (deja franjas arriba/abajo) → la burger se veía
+    notablemente más grande/zoom que las demás aunque el recorte "técnicamente"
+    ya centraba bien el sujeto. El usuario lo notó: *"¿por qué la imagen de la
+    hamburguesa es más grande que la de los demás?"*.
+  - **Fix real:** recortar las 5 fotos (desde los originales en
+    `scratchpad/drive-raw/simon-0{3,6,9,18,27}.jpg`) al **mismo aspect ratio
+    que la caja (4:3)**, centradas en la "masa principal" del plato — un
+    script Python (Pillow, sin numpy) que: (1) samplea el color de fondo en
+    las 4 esquinas, (2) para cada fila de píxeles mide el ancho del contenido
+    que difiere de ese color, (3) descarta filas cuyo ancho de contenido es
+    menor al 35% del máximo (así ignora el palillo delgado de la burger, que
+    sobresale arriba de la masa principal, pero SÍ cuenta el plato/tazón
+    entero como parte del sujeto), (4) arma un crop `4:3` centrado en el
+    centro-x del sujeto y con la altura de la "masa principal" + 6% de
+    padding, recortando ancho si se sale del borde de la imagen. Salida:
+    900×675 (4:3 exacto) para las 5, mismo nivel de "llenado" del frame.
+    **Lección:** si `object-fit:contain` se ve descentrado o de tamaño
+    distinto entre imágenes de una misma grilla/carrusel, casi siempre es
+    porque (a) el sujeto no está centrado DENTRO del archivo, y/o (b) las
+    imágenes no comparten el mismo aspect ratio que la caja — hay que
+    recortar la fuente para que ambas cosas coincidan, no pelear con CSS.
 - **Cómo se obtuvieron:** conector de Google Drive (MCP) — el cliente compartió
   el link de carpeta, se buscó `parentId = '<folder>'` y se bajaron los JPG con
   `download_file_content` (límite: **10 MB por archivo** en este conector; los
   más pesados del shooting, >10MB, no se pudieron traer — para esos habría que
   pedir el original directo o exportarlo más liviano). Los que sí bajaron se
   revisaron en un contact-sheet (Pillow) antes de elegir cuáles usar.
+- **`#menu-grid` es un carrusel de scroll horizontal** (18 sep 2026, el usuario
+  pidió el mismo patrón que `.reopening-gallery` — ver §20): dejó de ser
+  `display:grid`. Ahora `display:flex; overflow-x:auto; scroll-snap-type:x
+  mandatory` + scrollbar oculto. `.menu-item { flex:0 0 78%; scroll-snap-align:
+  start }` en móvil (peek de la siguiente tarjeta); `@media(min-width:640px)`
+  pasa a `flex-basis:320px` (varias visibles a la vez, se sigue pudiendo
+  scrollear para ver las 5). El scroll es nativo del navegador, eje X — no
+  interfiere con ScrollSmoother (eje Y).
 - **Testimonios:** avatares reales (`images/avatars/rev-1..3.jpg`, 400×400, del
   folder `~/Downloads/Avatares `). `.testimonial-avatar` pasó de círculo con
   iniciales a `<img>` `object-fit: cover` 48px. Se **quitó `.reveal` de las
@@ -540,10 +564,19 @@ tarjetas (features, menú, testimonios, ubicación, footer).
     el usuario pidió cambiarlo a la izquierda el mismo día.)
   - Se borraron `hero-burgers.mp4` / `hero-burgers-poster.jpg` (Pexels, ya no
     se usan) y el `hero-video` original (Pexels) tampoco existe más.
-  - **Iconos en `.feature-card`:** cada tarjeta lleva un `.feature-icon` (emoji,
-    `font-size:2rem`, antes del `h3`) — 🍺 microbrasserie, 🍗 ailes, 🏆 fidélité.
-    Mismo patrón que los emoji de `products[]`/`SAMPLE_PRODUCTS` (icono para
-    UI rápida, no imagen).
+  - **Iconos en `.feature-card` — SVG profesional, NUNCA emoji** (18 sep
+    2026). Primer intento fue con emoji (🍺🍗🏆); el usuario lo rechazó:
+    *"No uses emojis, te pedí iconos, iconos profesionales."* — regla dura
+    para todo el proyecto de aquí en adelante. `.feature-icon` (36×36px,
+    `color: var(--primary)`) contiene un `<svg>` inline dibujado a mano,
+    trazo fino (`stroke="currentColor" stroke-width="1.6"
+    stroke-linecap="round" stroke-linejoin="round"`, `fill="none"`,
+    `viewBox="0 0 24 24"`) — mismo lenguaje visual que `.plate-icon` del
+    navbar. Los 3 iconos actuales: jarra de cerveza (microbrasserie), llama
+    (ailes signature), trofeo (fidélité — referencia a la Copa Stanley).
+    Los emoji de `products[]`/`SAMPLE_PRODUCTS` (🍔🍖🐟…) SÍ se quedan —
+    esos son para la mini-vista del carrito/admin, no iconos de UI
+    decorativos; la regla aplica a iconos, no a esos emoji funcionales.
 
 ## 20. Sección "Reopening" — anuncio de reapertura (18 sep 2026)
 
