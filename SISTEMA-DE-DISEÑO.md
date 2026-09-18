@@ -350,8 +350,9 @@ tarjetas (features, menú, testimonios, ubicación, footer).
 - `.section--crayon h2` → blanco; `.section--crayon .section-lead` → blanco 92%.
   Las tarjetas interiores siguen blancas (`--bg-color`) → buen contraste.
 - **Aplicado a:** sección **Menu** (`#menu`) y **Testimonials** (`#testimonials`).
-  Resultado: hero(gris) → About(blanco) → **Menu(naranja)** → Gallery(blanco) →
-  **Testimonials(naranja)** → Location(blanco) → footer(oscuro).
+  Resultado: hero(foto) → **Reopening(oscuro)** → About(blanco) →
+  **Menu(naranja)** → Gallery(blanco) → **Testimonials(naranja)** →
+  Location(blanco) → footer(oscuro). (§19 tiene el detalle de Reopening.)
 - `section.` en el selector es a propósito: gana a `.menu-section` /
   `.testimonials-section { background-color: --bg-secondary }` sin importar el orden.
 
@@ -525,3 +526,25 @@ tarjetas (features, menú, testimonios, ubicación, footer).
     orden, solo el CSS.
   - Se borraron `hero-burgers.mp4` / `hero-burgers-poster.jpg` (Pexels, ya no
     se usan) y el `hero-video` original (Pexels) tampoco existe más.
+
+## 20. Sección "Reopening" — anuncio de reapertura (18 sep 2026)
+
+- **Contexto real del cliente:** el local viejo se demolió; están construyendo
+  una bâtisse nueva (más grande, moderna) en Sherbrooke, todavía sin abrir.
+  El usuario compartió 2 renders arquitectónicos (noche, cartel "OUVERTURE
+  BIENTÔT" visible en uno) y pidió meterlos como **segunda sección**, justo
+  después del hero y antes de "Pourquoi nous choisir?".
+- `#reopening` (`.reopening-section`): fondo oscuro (`--text-color`, igual que
+  el footer), texto centrado. `.reopening-badge` = pill naranja mayúsculas
+  ("Ouverture bientôt"). `h2` blanco ("Chez Stanley fait peau neuve"), `p`
+  blanco 85% explicando la demolición/reconstrucción.
+- `.reopening-gallery`: grid `2fr 1fr` (la primera imagen —la toma exterior
+  amplia— más grande; la segunda —la entrada— más chica), `gap:16px`,
+  `border-radius:24px` por item, `aspect-ratio:16/10`. En móvil
+  (`max-width:768px`) colapsa a 1 columna (apiladas). Ambas llevan `.reveal`
+  (anima solo desktop/tablet, ver §12.3).
+- Imágenes: `images/reopening/exterior-night.jpg` + `entrance-night.jpg`
+  (convertidas de los PNG que compartió el cliente — `~/Downloads/resto1.png`
+  / `resto2.png` — con `sips`, ~1600px de ancho, JPG calidad 85, ~230-310KB).
+- No está en el drawer de navegación (☰) — es un anuncio, no un destino de
+  scroll con ancla propia, igual que Location.
