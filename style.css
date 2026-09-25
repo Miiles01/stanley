@@ -455,7 +455,7 @@ section {
     gap: 16px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scroll-padding-left: 5%;
+    scroll-padding-left: 0;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     padding-bottom: 4px;
@@ -470,7 +470,7 @@ section {
 
 .reopening-item {
     margin: 0;
-    flex: 0 0 82%;
+    flex: 0 0 100%;
     scroll-snap-align: start;
     border-radius: 24px;
     overflow: hidden;
@@ -485,12 +485,11 @@ section {
     display: block;
 }
 
+/* Toujours des images entières : 1 par écran sur mobile, 2 côte à côte dès 768 px. */
 @media (min-width: 768px) {
-    .reopening-item {
-        flex-basis: 46%;
-    }
+    .reopening-item,
     .reopening-item--feature {
-        flex-basis: 58%;
+        flex-basis: calc((100% - 16px) / 2);
     }
 }
 
@@ -596,7 +595,7 @@ section {
     gap: 24px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scroll-padding-left: 5%;
+    scroll-padding-left: 0;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     padding-bottom: 4px;
@@ -610,7 +609,7 @@ section {
 }
 
 .menu-item {
-    flex: 0 0 78%;
+    flex: 0 0 100%;
     scroll-snap-align: start;
     background-color: var(--bg-color);
     border-radius: 24px;
@@ -619,9 +618,15 @@ section {
     flex-direction: column;
 }
 
+/* Cartes entières seulement (jamais coupées au bord) : 1 / 2 / 3 par écran. */
 @media (min-width: 640px) {
     .menu-item {
-        flex-basis: 320px;
+        flex-basis: calc((100% - 24px) / 2);
+    }
+}
+@media (min-width: 1024px) {
+    .menu-item {
+        flex-basis: calc((100% - 48px) / 3);
     }
 }
 

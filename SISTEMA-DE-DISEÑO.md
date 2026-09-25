@@ -378,6 +378,13 @@ tarjetas (features, menú, testimonios, ubicación, footer).
   se arrastra y al soltar alinea la tarjeta más cercana). Un arrastre no dispara el
   botón « Ajouter » que quede debajo del cursor.
 - Cada carrusel lleva `aria-label` en el HTML (se usa para el grupo de puntos).
+- **Nunca tarjetas/imágenes cortadas en el borde** (25 sep 2026, el usuario: "no hagas que
+  en el carrusel las imágenes se vean cortadas"). Sin "peek": los anchos se calculan para
+  que quepan tarjetas enteras. `#menu-grid`: 1 por pantalla (<640px, `flex-basis:100%`),
+  2 (`calc((100% - 24px)/2)`) desde 640px, 3 (`calc((100% - 48px)/3)`) desde 1024px.
+  `.reopening-gallery`: 1 por pantalla en móvil, 2 lado a lado desde 768px (entonces caben
+  las dos y los puntos se ocultan solos). `scroll-padding-left: 0` para que el snap alinee
+  exacto. Los puntos son la pista de que hay más.
 
 ## 14. Imágenes
 
@@ -616,9 +623,8 @@ tarjetas (features, menú, testimonios, ubicación, footer).
   pidió explícitamente — no grid estático): `display:flex; overflow-x:auto;
   scroll-snap-type:x mandatory;` + `scrollbar-width:none` /
   `::-webkit-scrollbar{display:none}` (scrollbar oculto). Cada
-  `.reopening-item { scroll-snap-align:start; flex:0 0 82% }` en móvil (deja
-  "peek" del siguiente slide, invita a swipear); `≥768px` pasa a
-  `flex-basis:46%` (`58%` la `--feature`) para que se vean ~2 a la vez.
+  `.reopening-item { scroll-snap-align:start }` — ver §13.3 para los anchos
+  (sin peek: imágenes siempre enteras).
   `border-radius:24px`, `aspect-ratio:16/10`. Ambas llevan `.reveal` (anima
   solo desktop/tablet, ver §12.3). El scroll usa el nativo del navegador
   (`overflow-x:auto`), no ScrollSmoother — son ejes distintos (x vs y), no
