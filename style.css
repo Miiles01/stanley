@@ -1407,7 +1407,7 @@ section.section--crayon {
     color: #fff;
     font-family: var(--font-main);
     font-weight: 600;
-    font-size: clamp(14px, 1.5vw, 22px);
+    font-size: clamp(17px, 2.1vw, 30px);
     letter-spacing: 0.01em;
     line-height: 1;
     white-space: nowrap;
@@ -1502,7 +1502,7 @@ section.section--crayon {
     .hx-hero { --title: 17vw; min-height: 0; gap: 24px; padding-bottom: 40px; }
     .hx-rotator { font-size: 7.6vw; height: 11vw; }
     .hx-main { flex-direction: column; align-items: center; padding-bottom: 0.55em; }
-    .hx-sticker { font-size: 14px; }
+    .hx-sticker { font-size: 17px; }
     .hx-lead { font-size: 1rem; }
     .hx-actions { flex-direction: column; align-items: stretch; width: 100%; }
     .hx-btn-primary { justify-content: space-between; }

@@ -689,3 +689,10 @@ el asfalto de justo debajo). Exportada a `images/cantine-stanley-1920.jpg` (340 
 (`#hx-video-el`, `object-position: 55% 45%`). La frase « Du grill à ta table… » pasó
 **abajo a la izquierda** (sobre degradado oscuro) para no tapar el logo del truck. Móvil: caja 4:3.
 Los videos `hero-grill-*` se borraron del repo.
+
+### 21.3 Nuevo video en « Pourquoi nous choisir ? » y sticker « De retour bientôt ! » (25 sep 2026)
+- Video del cliente `~/Downloads/IMG_7088.MOV` (noche de música en vivo en el bar, iPhone HEVC
+  rotado, 20,5 s, 44 MB) → `video/about-live.mp4` (H.264 720×1280, sin audio, CRF 29, 3,5 MB,
+  completo) + `about-live-poster.jpg`. Reemplaza a `about-bar.mp4` (borrado del repo).
+- Sticker del hero: « De retour bientôt ! » (el local se está reconstruyendo, ver §20), más grande:
+  `clamp(17px, 2.1vw, 30px)` (móvil 17px), sigue en Poppins 600.
