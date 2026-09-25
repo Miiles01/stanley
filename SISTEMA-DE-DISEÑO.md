@@ -679,3 +679,13 @@ antes `max-width: 300px`; ahora `.about-layout { align-items: center }` y
   (padding 24px, h3 1.25rem, icono 28px) para quedar a la altura del video;
 - desktop (≥1024): `width: 46%; max-width: 520px` (~485×863 a 1172px), gap 56px.
 Móvil sin cambios (arriba, max 360px).
+
+### 21.2 Video del hero → foto de la cantine (25 sep 2026)
+El usuario pidió quitar el video de Saint-Tite del bloque que crece con el scroll y poner
+una foto del **food truck « Cantine Chez Stanley »** (captura que pegó en el chat, 1934×1082,
+con el letrero « Play (k) » del reproductor abajo a la izquierda → borrado con Pillow copiando
+el asfalto de justo debajo). Exportada a `images/cantine-stanley-1920.jpg` (340 KB) y
+`-960.jpg` (110 KB) con `srcset`. Mismo efecto (clip-path + pin), ahora sobre `<img class="hx-media">`
+(`#hx-video-el`, `object-position: 55% 45%`). La frase « Du grill à ta table… » pasó
+**abajo a la izquierda** (sobre degradado oscuro) para no tapar el logo del truck. Móvil: caja 4:3.
+Los videos `hero-grill-*` se borraron del repo.

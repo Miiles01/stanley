@@ -6,7 +6,7 @@
     <title>Chez Stanley — Resto-bar sportif</title>
     <!-- Mark JS on before first paint so animatable elements start hidden (no flash). -->
     <script>document.documentElement.classList.add('gsap');</script>
-    <link rel="stylesheet" href="style.css?v=62">
+    <link rel="stylesheet" href="style.css?v=65">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Ultra&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -67,13 +67,11 @@
         </div>
     </header>
 
-    <!-- Vidéo qui s'agrandit au scroll (desktop/tablette) ; carrée et fixe sur mobile -->
-    <section class="hx-video" id="hx-video" aria-label="Au grill, chez Stanley">
+    <!-- Photo de la cantine qui s'agrandit au scroll (desktop/tablette) ; fixe sur mobile -->
+    <section class="hx-video" id="hx-video" aria-label="La cantine Chez Stanley">
         <div class="hx-video-stage" id="hx-video-stage">
             <div class="hx-video-box" id="hx-video-box">
-                <video id="hx-video-el" muted loop playsinline preload="metadata" aria-hidden="true"
-                    data-src-wide="video/hero-grill-wide.mp4?v=1" data-poster-wide="video/hero-grill-wide-poster.jpg"
-                    data-src-square="video/hero-grill-square.mp4?v=1" data-poster-square="video/hero-grill-square-poster.jpg"></video>
+                <img id="hx-video-el" class="hx-media" src="images/cantine-stanley-1920.jpg" srcset="images/cantine-stanley-960.jpg 960w, images/cantine-stanley-1920.jpg 1920w" sizes="100vw" width="1920" height="1074" alt="La cantine mobile Chez Stanley, prête pour vos événements" loading="lazy" decoding="async">
                 <p class="hx-video-heading" id="hx-video-heading">Du grill à ta table : ailes, grillades et tous les matchs sur grand écran, ici à Sherbrooke.</p>
             </div>
         </div>
@@ -388,6 +386,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
     <script src="store.js?v=15"></script>
-    <script src="script.js?v=40"></script>
+    <script src="script.js?v=41"></script>
 </body>
 </html>

@@ -1515,24 +1515,24 @@ section.section--crayon {
     position: absolute;
     inset: 0;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-end;
+    justify-content: flex-start;
     background: #1a0e06;
     clip-path: inset(24% 27% 24% 27% round 28px);
     will-change: clip-path;
 }
-.hx-video-box video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.hx-video-box::after { content: ""; position: absolute; inset: 0; background: rgba(17, 10, 5, 0.42); pointer-events: none; }
+.hx-video-box .hx-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 55% 45%; }
+.hx-video-box::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(17, 10, 5, 0) 35%, rgba(17, 10, 5, 0.78) 100%); pointer-events: none; }
 .hx-video-heading {
     position: relative;
     z-index: 1;
-    max-width: 1000px;
-    padding: 0 5%;
+    max-width: 16em;
+    padding: 0 0 6vh 5vw;
     color: #fff;
     font-family: var(--font-display);
-    font-size: clamp(28px, 4.2vw, 62px);
+    font-size: clamp(26px, 3.2vw, 50px);
     line-height: 1.15;
-    text-align: center;
+    text-align: left;
     text-wrap: balance;
     margin: 0;
 }
@@ -1542,8 +1542,9 @@ section.section--crayon {
 @media (max-width: 767px) {
     .hx-video { padding: 0 5% 16px; }
     .hx-video-stage { height: auto; overflow: visible; }
-    .hx-video-box { position: relative; aspect-ratio: 1 / 1; clip-path: none; border-radius: 20px; overflow: hidden; }
-    .hx-video-heading { font-size: 6.4vw; }
+    .hx-video-box { position: relative; aspect-ratio: 4 / 3; clip-path: none; border-radius: 20px; overflow: hidden; }
+    .hx-video-box .hx-media { object-position: 50% 50%; }
+    .hx-video-heading { font-size: 5.2vw; padding: 0 16px 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -620,7 +620,7 @@ function initAnimations() {
     }, 4000);
 }
 
-// ===== Hero (façon Tulum) + vidéo qui s'agrandit au scroll =====
+// ===== Hero (façon Tulum) + photo de la cantine qui s'agrandit au scroll =====
 function initHero() {
     const hero = document.getElementById('hx-hero');
     if (!hero) return;
@@ -636,16 +636,10 @@ function initHero() {
     (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(start);
     setTimeout(start, 1500); // au cas où les polices tardent
 
-    // Vidéo : large sur tablette/bureau, carrée sur mobile.
+    // Média (photo de la cantine) + phrase qui apparaît mot par mot.
     const video = document.getElementById('hx-video-el');
     const heading = document.getElementById('hx-video-heading');
     const mobile = window.matchMedia('(max-width: 767px)').matches;
-    video.poster = mobile ? video.dataset.posterSquare : video.dataset.posterWide;
-    video.src = mobile ? video.dataset.srcSquare : video.dataset.srcWide;
-    video.muted = true;
-    new IntersectionObserver(([e]) => {
-        if (e.isIntersecting) video.play().catch(() => {}); else video.pause();
-    }, { threshold: 0.05 }).observe(video);
 
     heading.innerHTML = heading.textContent.split(' ')
         .map((w, k) => `<span class="hx-vword" style="transition-delay:${k * 60}ms">${w} </span>`).join('');
