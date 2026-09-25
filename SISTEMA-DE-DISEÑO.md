@@ -643,3 +643,31 @@ tarjetas (features, menú, testimonios, ubicación, footer).
   / `resto2.png` — con `sips`, ~1600px de ancho, JPG calidad 85, ~230-310KB).
 - No está en el drawer de navegación (☰) — es un anuncio, no un destino de
   scroll con ancla propia, igual que Location.
+
+## 21. Hero façon Tulum + vidéo qui s'agrandit (25 sep 2026)
+
+El usuario encontró aburrido el hero ("L'ultime soirée de match" + foto) y pidió el de
+Tulum (`/Users/miileshorton/Claude/Tulum`, `src/pages/Home.jsx` + `src/home/home.css`, clases `hx-`).
+- **Hero `#hx-hero` (fondo blanco):** `h1.hx-title` con `aria-label` completo.
+  - `.hx-rotator`: máscara con 3 frases naranja (`Soirée de match` / `Bière bien froide` /
+    `Comfort food`) que suben inclinadas −4°, ciclo `--cycle: 9s`, una cada 3 s
+    (`animation-delay` 0 / cycle/3 / 2·cycle/3). Arranca con `.is-in` al cargar las fuentes.
+  - `.hx-main`: « Chez Stanley » en Ultra negro, **letra por letra** (`initHero()` envuelve
+    cada letra en `.hx-letter > span` con `--i`). ⚠️ La regla global `h1 span { color: naranja }`
+    pintaba todo: `.hx-name` y `.hx-letter` fuerzan `color: var(--text-color)`/`inherit`.
+  - `.hx-sticker` naranja « Tous les matchs sur grand écran ! » (−4°, entra con rebote).
+  - `.hx-lead` + `.hx-actions`: « Réserver une table » (`#reserve-open`, contorno que se rellena)
+    y « Commander » (`#menu`, píldora negra con círculo naranja y flecha que se desliza).
+  - Móvil (<768): `--title: 17vw`, « Chez » / « Stanley » en dos líneas, botones a 100 %.
+- **`#hx-video` (debajo del hero):** video del cliente (festival de Saint-Tite, Drive
+  `2026-09-02-004735013.mp4`, tramo 6,95–12,3 s: banner Chez Stanley → plancha → carne →
+  camarones, con fundidos a negro que hacen el bucle natural). Recorte por toma con
+  `crop=...:y='if(lt(t,0.75),A,if(lt(t,2.4),B,C))'` para que cada toma quede centrada:
+  `video/hero-grill-wide.mp4` (1080×720, 1,2 MB) y `hero-grill-square.mp4` (720×720, 0,9 MB) + posters.
+  - Escritorio/tablet: la tarjeta crece con `clip-path` `inset(24% 27% round 28px)` →
+    `inset(2.5% 1.6% round 18px)` mientras la sección sube (`top 85%` → `top top`, scrub 0.6),
+    video `scale 1.25 → 1`, luego **pin de `#hx-video-stage` con ScrollTrigger** durante 100 %
+    (no `sticky`: dentro de ScrollSmoother no funciona) y la frase aparece palabra por palabra.
+  - Móvil: cuadrado fijo con radio 20px, frase al entrar en pantalla (IntersectionObserver).
+  - Reduced motion: sin rotación, sin crecimiento.
+- El hero viejo (`.hero`, `.hero--photo`, `.hero-overlay`, `.hero-actions`) se borró del CSS.

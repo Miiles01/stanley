@@ -6,7 +6,7 @@
     <title>Chez Stanley — Resto-bar sportif</title>
     <!-- Mark JS on before first paint so animatable elements start hidden (no flash). -->
     <script>document.documentElement.classList.add('gsap');</script>
-    <link rel="stylesheet" href="style.css?v=55">
+    <link rel="stylesheet" href="style.css?v=59">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Ultra&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -40,18 +40,44 @@
     <div id="smooth-wrapper">
     <div id="smooth-content">
 
-    <!-- Hero Section — static image (the real video lives in #about now) -->
-    <header class="hero hero--photo">
-        <div class="hero-overlay" aria-hidden="true"></div>
-        <div class="hero-content">
-            <h1 class="text">L'ultime <span>soirée de match</span></h1>
-            <p class="line">Comfort food, bière locale bien froide et tous les matchs sur grand écran. Le resto-bar sportif de Sherbrooke.</p>
-            <div class="hero-actions">
-                <a href="#menu" class="btn primary-btn">Commander</a>
-                <button type="button" class="btn secondary-btn" id="reserve-open">Réserver une table</button>
-            </div>
+    <!-- Hero — titre animé (même principe que Tulum) : mot qui défile + « Chez Stanley » lettre par lettre -->
+    <header class="hx-hero" id="hx-hero">
+        <h1 class="hx-title" aria-label="Chez Stanley — soirée de match, bière bien froide et comfort food">
+            <span class="hx-rotator" aria-hidden="true">
+                <span class="hx-word">Soirée de match</span>
+                <span class="hx-word">Bière bien froide</span>
+                <span class="hx-word">Comfort food</span>
+            </span>
+            <span class="hx-main" aria-hidden="true">
+                <span class="hx-name" data-letters>Chez</span>
+                <span class="hx-name" data-letters>Stanley</span>
+                <span class="hx-sticker">Tous les matchs sur grand écran !</span>
+            </span>
+        </h1>
+        <p class="hx-lead">Comfort food, bière locale bien froide et tous les matchs sur grand écran. Le resto-bar sportif de Sherbrooke.</p>
+        <div class="hx-actions">
+            <button type="button" class="hx-btn-secondary" id="reserve-open"><span>Réserver une table</span></button>
+            <a href="#menu" class="hx-btn-primary">
+                <span>Commander</span>
+                <span class="hx-btn-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </span>
+            </a>
         </div>
     </header>
+
+    <!-- Vidéo qui s'agrandit au scroll (desktop/tablette) ; carrée et fixe sur mobile -->
+    <section class="hx-video" id="hx-video" aria-label="Au grill, chez Stanley">
+        <div class="hx-video-stage" id="hx-video-stage">
+            <div class="hx-video-box" id="hx-video-box">
+                <video id="hx-video-el" muted loop playsinline preload="metadata" aria-hidden="true"
+                    data-src-wide="video/hero-grill-wide.mp4?v=1" data-poster-wide="video/hero-grill-wide-poster.jpg"
+                    data-src-square="video/hero-grill-square.mp4?v=1" data-poster-square="video/hero-grill-square-poster.jpg"></video>
+                <p class="hx-video-heading" id="hx-video-heading">Du grill à ta table : ailes, grillades et tous les matchs sur grand écran, ici à Sherbrooke.</p>
+            </div>
+        </div>
+    </section>
 
     <!-- Reopening Section — new building, old one demolished -->
     <section id="reopening" class="reopening-section">
@@ -362,6 +388,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
     <script src="store.js?v=15"></script>
-    <script src="script.js?v=39"></script>
+    <script src="script.js?v=40"></script>
 </body>
 </html>

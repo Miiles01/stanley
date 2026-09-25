@@ -620,6 +620,58 @@ function initAnimations() {
     }, 4000);
 }
 
+// ===== Hero (façon Tulum) + vidéo qui s'agrandit au scroll =====
+function initHero() {
+    const hero = document.getElementById('hx-hero');
+    if (!hero) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // « Chez » / « Stanley » : une <span> par lettre, décalée par --i.
+    let i = 0;
+    hero.querySelectorAll('[data-letters]').forEach(word => {
+        word.innerHTML = [...word.textContent].map(ch =>
+            `<span class="hx-letter"><span style="--i:${i++}">${ch}</span></span>`).join('');
+    });
+    const start = () => requestAnimationFrame(() => hero.classList.add('is-in'));
+    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(start);
+    setTimeout(start, 1500); // au cas où les polices tardent
+
+    // Vidéo : large sur tablette/bureau, carrée sur mobile.
+    const video = document.getElementById('hx-video-el');
+    const heading = document.getElementById('hx-video-heading');
+    const mobile = window.matchMedia('(max-width: 767px)').matches;
+    video.poster = mobile ? video.dataset.posterSquare : video.dataset.posterWide;
+    video.src = mobile ? video.dataset.srcSquare : video.dataset.srcWide;
+    video.muted = true;
+    new IntersectionObserver(([e]) => {
+        if (e.isIntersecting) video.play().catch(() => {}); else video.pause();
+    }, { threshold: 0.05 }).observe(video);
+
+    heading.innerHTML = heading.textContent.split(' ')
+        .map((w, k) => `<span class="hx-vword" style="transition-delay:${k * 60}ms">${w} </span>`).join('');
+
+    if (mobile || reduced || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+        new IntersectionObserver(([e]) => {
+            if (e.isIntersecting) heading.classList.add('is-in');
+        }, { threshold: 0.4 }).observe(heading);
+        return;
+    }
+
+    // Bureau/tablette : la carte grandit pendant que la section monte, puis reste épinglée
+    // un écran le temps que la phrase apparaisse (même chorégraphie que Tulum).
+    const box = document.getElementById('hx-video-box');
+    const grow = { trigger: '#hx-video', start: 'top 85%', end: 'top top', scrub: 0.6 };
+    gsap.fromTo(box, { clipPath: 'inset(24% 27% 24% 27% round 28px)' },
+        { clipPath: 'inset(2.5% 1.6% 2.5% 1.6% round 18px)', ease: 'none', scrollTrigger: grow });
+    gsap.fromTo(video, { scale: 1.25 }, { scale: 1, ease: 'none', scrollTrigger: { ...grow } });
+    ScrollTrigger.create({ trigger: '#hx-video', start: 'top top', end: '+=100%', pin: '#hx-video-stage' });
+    ScrollTrigger.create({
+        trigger: '#hx-video', start: 'top -15%',
+        onEnter: () => heading.classList.add('is-in'),
+        onLeaveBack: () => heading.classList.remove('is-in')
+    });
+}
+
 // Init
 renderMenu();
 initCarousel(document.getElementById('menu-grid'));
@@ -627,3 +679,4 @@ initCarousel(document.querySelector('.reopening-gallery'));
 updateCart();
 updateAuthUI();
 initAnimations();
+initHero();
