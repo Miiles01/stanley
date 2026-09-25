@@ -655,7 +655,7 @@ Tulum (`/Users/miileshorton/Claude/Tulum`, `src/pages/Home.jsx` + `src/home/home
   - `.hx-main`: « Chez Stanley » en Ultra negro, **letra por letra** (`initHero()` envuelve
     cada letra en `.hx-letter > span` con `--i`). ⚠️ La regla global `h1 span { color: naranja }`
     pintaba todo: `.hx-name` y `.hx-letter` fuerzan `color: var(--text-color)`/`inherit`.
-  - `.hx-sticker` naranja « Tous les matchs sur grand écran ! » (−4°, entra con rebote).
+  - `.hx-sticker` naranja « Tous les matchs ! » (−4°, entra con rebote) en **Poppins 600**, no Ultra (el usuario lo pidió más corto y menos bold).
   - `.hx-lead` + `.hx-actions`: « Réserver une table » (`#reserve-open`, contorno que se rellena)
     y « Commander » (`#menu`, píldora negra con círculo naranja y flecha que se desliza).
   - Móvil (<768): `--title: 17vw`, « Chez » / « Stanley » en dos líneas, botones a 100 %.
