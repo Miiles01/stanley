@@ -301,9 +301,18 @@ tarjetas (features, menú, testimonios, ubicación, footer).
   ```js
   ScrollSmoother.create({
     wrapper: '#smooth-wrapper', content: '#smooth-content',
-    smooth: 1.3, effects: false, normalizeScroll: true
+    smooth: 1.3, effects: false,
+    normalizeScroll: !ScrollTrigger.isTouch,  // ⚠️ NUNCA true en táctil
+    smoothTouch: 0.1
   });
   ```
+- ⚠️ **`normalizeScroll` solo en escritorio** (25 sep 2026). Con `normalizeScroll: true`
+  en pantallas táctiles, GSAP cancela TODOS los `touchmove` (`preventDefault`) para
+  manejar él el scroll vertical → los carruseles horizontales (`#menu-grid`,
+  `.reopening-gallery`) dejaban de deslizarse en el celular. Verificado con
+  `TouchEvent` sintéticos: antes 100 % de los `touchmove` cancelados, después 0 %.
+  En móvil el lissage lo da `smoothTouch: 0.1` (no roba gestos). Cualquier
+  elemento con scroll propio (horizontal o vertical) necesita esto.
 - **Anchors internos** (`a[href^="#"]`): `smoother.scrollTo(target, true, 'top <navH>px')`.
   `href="#"` (logo) → scroll al top. Fallback `fallbackScrollTo` (rAF) si el
   plugin no cargó.
@@ -355,6 +364,20 @@ tarjetas (features, menú, testimonios, ubicación, footer).
   Location(blanco) → footer(oscuro). (§19 tiene el detalle de Reopening.)
 - `section.` en el selector es a propósito: gana a `.menu-section` /
   `.testimonials-section { background-color: --bg-secondary }` sin importar el orden.
+
+### 13.3 Carrousels horizontaux (`initCarousel` en `script.js`)
+- Aplica a `#menu-grid` y `.reopening-gallery`. El scroll sigue siendo **nativo**
+  (`overflow-x:auto` + `scroll-snap`), con `touch-action: pan-x pan-y` y
+  `overscroll-behavior-x: contain` → swipe nativo en móvil, sin robar el scroll vertical.
+- **Puntos de paginación** (`.carousel-dots` / `.carousel-dot`, creados por JS justo
+  después del carrusel): el activo es una píldora blanca de 22px, los demás puntos de
+  8px al 45 %. Zona táctil de 28px. Tocar un punto lleva a esa tarjeta. Se ocultan
+  solos si todo cabe en pantalla. Se reconstruyen si cambian las tarjetas
+  (`MutationObserver`).
+- **Escritorio:** se puede arrastrar con el mouse (`.is-dragging` apaga el snap mientras
+  se arrastra y al soltar alinea la tarjeta más cercana). Un arrastre no dispara el
+  botón « Ajouter » que quede debajo del cursor.
+- Cada carrusel lleva `aria-label` en el HTML (se usa para el grupo de puntos).
 
 ## 14. Imágenes
 

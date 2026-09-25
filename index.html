@@ -6,7 +6,7 @@
     <title>Chez Stanley — Resto-bar sportif</title>
     <!-- Mark JS on before first paint so animatable elements start hidden (no flash). -->
     <script>document.documentElement.classList.add('gsap');</script>
-    <link rel="stylesheet" href="style.css?v=53">
+    <link rel="stylesheet" href="style.css?v=54">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Ultra&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -59,7 +59,7 @@
             <span class="reopening-badge">Ouverture bientôt</span>
             <h2 class="text">Chez Stanley fait peau neuve</h2>
             <p class="line">Notre ancienne bâtisse a été démolie pour faire place à une toute nouvelle adresse — plus grande, plus moderne, toujours à Sherbrooke. La construction avance bien et on a hâte de vous accueillir dans notre nouveau chez-nous.</p>
-            <div class="reopening-gallery">
+            <div class="reopening-gallery" aria-label="Photos de la nouvelle bâtisse">
                 <figure class="reopening-item reopening-item--feature reveal">
                     <img src="images/reopening/exterior-night.jpg?v=1" alt="Rendu extérieur de la nouvelle bâtisse Chez Stanley, de nuit" loading="lazy" />
                 </figure>
@@ -123,7 +123,7 @@
     <section id="menu" class="menu-section section--crayon">
         <div class="menu-container">
             <h2 class="text">Notre menu</h2>
-            <div class="menu-grid" id="menu-grid">
+            <div class="menu-grid" id="menu-grid" aria-label="Notre menu">
                 <!-- Populated by JS -->
             </div>
         </div>
@@ -362,6 +362,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
     <script src="store.js?v=15"></script>
-    <script src="script.js?v=38"></script>
+    <script src="script.js?v=39"></script>
 </body>
 </html>

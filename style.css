@@ -459,6 +459,9 @@ section {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     padding-bottom: 4px;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+    cursor: grab;
 }
 
 .reopening-gallery::-webkit-scrollbar {
@@ -597,6 +600,9 @@ section {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     padding-bottom: 4px;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+    cursor: grab;
 }
 
 .menu-grid::-webkit-scrollbar {
@@ -1314,4 +1320,49 @@ section.section--crayon {
         grid-template-columns: 1fr 1fr;
         gap: 24px 20px;
     }
+}
+
+/* Carrousels : points de pagination + état « glisser » (souris) */
+.menu-grid.is-dragging,
+.reopening-gallery.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    user-select: none;
+}
+.menu-grid.is-dragging img,
+.reopening-gallery.is-dragging img {
+    pointer-events: none;
+}
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin-top: 20px;
+}
+.carousel-dot {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+}
+.carousel-dot::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.45);
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+.carousel-dot[aria-current="true"]::before {
+    width: 22px;
+    background: #fff;
+}
+.carousel-dot:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+    border-radius: 999px;
 }

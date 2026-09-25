@@ -97,6 +97,82 @@ function renderMenu() {
     });
 }
 
+// Carrousels horizontaux : points de pagination + glisser à la souris (bureau).
+// Le défilement reste celui du navigateur (scroll-snap) : swipe natif sur mobile.
+function initCarousel(track) {
+    if (!track || track.dataset.carousel) return;
+    track.dataset.carousel = '1';
+    const items = () => [...track.children];
+    const label = track.getAttribute('aria-label') || 'Carrousel';
+
+    const dots = document.createElement('div');
+    dots.className = 'carousel-dots';
+    dots.setAttribute('role', 'group');
+    dots.setAttribute('aria-label', label + ' : aller à une image');
+    track.after(dots);
+
+    const buildDots = () => {
+        dots.innerHTML = items().map((_, i) =>
+            `<button type="button" class="carousel-dot" aria-label="Élément ${i + 1} sur ${items().length}"></button>`).join('');
+        update();
+    };
+    const current = () => {
+        const left = track.scrollLeft;
+        let best = 0, dist = Infinity;
+        items().forEach((el, i) => {
+            const d = Math.abs(el.offsetLeft - track.offsetLeft - left);
+            if (d < dist) { dist = d; best = i; }
+        });
+        // Au bout du rail, le dernier point s'allume même si l'élément ne peut pas s'aligner à gauche.
+        if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) best = items().length - 1;
+        return best;
+    };
+    let raf = 0;
+    function update() {
+        raf = 0;
+        const i = current();
+        [...dots.children].forEach((d, k) => d.setAttribute('aria-current', k === i ? 'true' : 'false'));
+        // Pas de points si tout tient à l'écran.
+        dots.hidden = track.scrollWidth <= track.clientWidth + 4;
+    }
+    track.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+    window.addEventListener('resize', () => { if (!raf) raf = requestAnimationFrame(update); });
+    dots.addEventListener('click', (e) => {
+        const b = e.target.closest('.carousel-dot');
+        if (!b) return;
+        const el = items()[[...dots.children].indexOf(b)];
+        track.scrollTo({ left: el.offsetLeft - track.offsetLeft, behavior: 'smooth' });
+    });
+
+    // Glisser à la souris (les écrans tactiles utilisent le swipe natif).
+    let down = false, startX = 0, startLeft = 0, moved = false;
+    track.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        down = true; moved = false; startX = e.clientX; startLeft = track.scrollLeft;
+        track.classList.add('is-dragging');
+    });
+    window.addEventListener('pointermove', (e) => {
+        if (!down) return;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 5) moved = true;
+        track.scrollLeft = startLeft - dx;
+    });
+    window.addEventListener('pointerup', () => {
+        if (!down) return;
+        down = false;
+        track.classList.remove('is-dragging');
+        // Laisse le snap reprendre la main pour aligner la carte la plus proche.
+        const el = items()[current()];
+        track.scrollTo({ left: el.offsetLeft - track.offsetLeft, behavior: 'smooth' });
+    });
+    // Un glisser ne doit pas déclencher le bouton « Ajouter » sous la souris.
+    track.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+    track.addEventListener('dragstart', (e) => e.preventDefault());
+
+    buildDots();
+    new MutationObserver(buildDots).observe(track, { childList: true });
+}
+
 // Cart Logic
 function addToCart(id) {
     const product = products.find(p => p.id === id);
@@ -477,7 +553,11 @@ function initAnimations() {
             content: '#smooth-content',
             smooth: 1.3,
             effects: false,
-            normalizeScroll: true
+            // Sur écran tactile, normalizeScroll bloquait tous les touchmove : les
+            // carrousels horizontaux ne glissaient plus. On le garde au bureau seulement ;
+            // smoothTouch garde un léger lissage sur mobile sans voler les gestes.
+            normalizeScroll: !ScrollTrigger.isTouch,
+            smoothTouch: 0.1
         });
     }
 
@@ -542,6 +622,8 @@ function initAnimations() {
 
 // Init
 renderMenu();
+initCarousel(document.getElementById('menu-grid'));
+initCarousel(document.querySelector('.reopening-gallery'));
 updateCart();
 updateAuthUI();
 initAnimations();
