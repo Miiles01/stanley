@@ -671,3 +671,11 @@ Tulum (`/Users/miileshorton/Claude/Tulum`, `src/pages/Home.jsx` + `src/home/home
   - Móvil: cuadrado fijo con radio 20px, frase al entrar en pantalla (IntersectionObserver).
   - Reduced motion: sin rotación, sin crecimiento.
 - El hero viejo (`.hero`, `.hero--photo`, `.hero-overlay`, `.hero-actions`) se borró del CSS.
+
+### 21.1 Video de « Pourquoi nous choisir ? » más grande (25 sep 2026)
+El usuario pidió que el video del bar « se note » en tablet y desktop. `.about-video`:
+antes `max-width: 300px`; ahora `.about-layout { align-items: center }` y
+- tablet (768–1023): `width: 50%` (~346×614 a 768px); las `.feature-card` se compactan
+  (padding 24px, h3 1.25rem, icono 28px) para quedar a la altura del video;
+- desktop (≥1024): `width: 46%; max-width: 520px` (~485×863 a 1172px), gap 56px.
+Móvil sin cambios (arriba, max 360px).

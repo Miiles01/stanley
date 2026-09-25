@@ -474,12 +474,14 @@ section {
 @media (min-width: 768px) {
     .about-layout {
         flex-direction: row;
-        align-items: stretch;
+        align-items: center;
         gap: 40px;
     }
+    /* Vidéo bien visible : presque la moitié de la section (le client l'a demandée plus grande). */
     .about-video {
         order: 1;
-        max-width: 300px;
+        width: 44%;
+        max-width: 420px;
         margin: 0;
     }
     .features-grid {
@@ -488,6 +490,19 @@ section {
         grid-template-columns: 1fr;
         align-content: center;
     }
+}
+/* Tablette : la vidéo prend la moitié, les cartes se compactent pour rester à sa hauteur. */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .about-layout { gap: 24px; }
+    .about-video { width: 50%; max-width: none; }
+    .features-grid { gap: 16px; }
+    .features-grid .feature-card { padding: 24px; }
+    .features-grid .feature-card h3 { font-size: 1.25rem; margin-bottom: 8px; }
+    .features-grid .feature-icon { width: 28px; height: 28px; margin-bottom: 12px; }
+}
+@media (min-width: 1024px) {
+    .about-layout { gap: 56px; }
+    .about-video { width: 46%; max-width: 520px; }
 }
 
 .feature-card {
