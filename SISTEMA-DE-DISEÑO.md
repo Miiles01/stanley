@@ -580,6 +580,15 @@ tarjetas (features, menú, testimonios, ubicación, footer).
     se probó un crop horizontal para el hero, pero el cliente pidió que el
     video se viera **vertical**, así que se re-renderizó desde el original sin
     `crop`. Sin audio, H.264, `video/about-saint-tite.mp4` (~1MB).
+  - **Reemplazado (25 sep 2026)** por un video del cliente: interior del bar con las
+    pantallas de hockey (`~/Downloads/IMG_4815.MOV`, iPhone HEVC 1920×1080 rotado,
+    8,7 s, 17 MB) → `video/about-bar.mp4` (H.264 720×1280, sin audio, CRF 26,
+    `+faststart`, 1,7 MB) + poster `video/about-bar-poster.jpg`. Comando:
+    `ffmpeg -i IMG_4815.MOV -an -vf "scale=720:-2,fps=30,format=yuv420p" -c:v libx264
+    -preset slow -crf 26 -movflags +faststart video/about-bar.mp4` (ffmpeg aplica solo
+    la rotación del iPhone). `about-saint-tite.mp4` se borró del repo.
+  - **Título en dos líneas:** `Pourquoi nous<br>choisir&nbsp;?` (el `&nbsp;` evita que
+    el « ? » quede solo en una línea, regla francesa del espacio antes de « ? »).
   - El poster (`video/hero-saint-tite-poster.jpg`, frame de los camarones,
     del recorte horizontal viejo) quedó reutilizado como fondo estático del
     hero — no se volvió a generar.
