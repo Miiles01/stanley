@@ -10,7 +10,12 @@
 > Este archivo vive en el repo para que cualquiera que lo abra sepa cómo se
 > construye el sitio.
 
-Última actualización: 2026-09-07
+Última actualización: 2026-10-11
+
+> ⚠️ **11 oct 2026 — landing rehecha con la estructura y la animación de Flamme Up**
+> (`github.com/Miiles01/flammeup`), conservando la identidad de Stanley. Ver **§22**.
+> Donde §5–§7, §11–§13 y §19–§21 contradigan a §22, manda §22 (describen la versión
+> anterior). El admin no cambió.
 
 ---
 
@@ -18,13 +23,17 @@
 
 - **HTML + CSS + JS puro.** Sin frameworks, sin build, sin bundler.
 - **GSAP** (vía CDN) es la **única** dependencia externa, y solo para animación:
-  `gsap` + `ScrollTrigger` + `SplitText` (v3.13.0, jsDelivr).
+  `gsap` + `ScrollTrigger` + `ScrollSmoother` (v3.13.0, jsDelivr). `SplitText` ya no se
+  usa: el corte palabra por palabra lo hace `splitWords()` en `script.js`.
 - Se sirve en local con `python3 -m http.server` y se despliega por una rama
   `deploy` a Hostinger (el sitio = el contenido de esa rama, sin build).
 
 | Archivo | Rol |
 |---|---|
-| `index.html` / `style.css` / `script.js` | **Storefront**: landing, menú, carrito, cuenta, lealtad |
+| `index.html` / `script.js` | **Storefront**: landing, menú, carrito, cuenta, lealtad |
+| `style.css` | **Compartido** storefront + admin: tokens, tipografía, botones `.btn`, modales, formularios |
+| `site.css` | **Solo la landing** (§22). El admin no lo carga |
+| `flame.js` | Flama del grill en WebGL (hero y « Nous trouver ») |
 | `store.js` | **Capa de datos compartida** (localStorage). La cargan storefront y admin |
 | `admin.html` / `admin.css` / `admin.js` | **Panel de administración** (tablero de pedidos + miembros) |
 | `SISTEMA-DE-DISEÑO.md` | Este documento |
@@ -696,3 +705,72 @@ Los videos `hero-grill-*` se borraron del repo.
   completo) + `about-live-poster.jpg`. Reemplaza a `about-bar.mp4` (borrado del repo).
 - Sticker del hero: « De retour bientôt ! » (el local se está reconstruyendo, ver §20), más grande:
   `clamp(17px, 2.1vw, 30px)` (móvil 17px), sigue en Poppins 600.
+
+## 22. Landing con la estructura de Flamme Up (11 oct 2026)
+
+El usuario pidió darle a Stanley « la misma estructura, estilo visual animado » que
+Flamme Up, y eligió **estructura + animaciones con la identidad de Stanley** (naranja
+`#FF6600`, blancos/grises, `#111` para zonas oscuras, Ultra + Poppins, sus fotos y su copy).
+
+### 22.1 Recorrido (de arriba a abajo)
+1. **Preloader** (`#preloader`): fondo naranja, anillo SVG que se llena, logo `images/logo.png`
+   usado como **máscara** (`.logo-mono`, se recolorea con `color`) que se rellena de abajo
+   arriba, `%` en Ultra. Cuando la flama dibuja su primer frame y las fuentes cargan (o a los
+   3,5 s), el telón sube con `clip-path` y arranca el hero.
+2. **Header de vidrio** (`.site-header`, fuera de `#smooth-content`): pastillas `.glass`
+   (blanco 82 % + `backdrop-filter`). Escritorio (≥1024): logo · nav (Menu, La maison,
+   Pourquoi nous, Nous trouver) · « Connexion » (`#auth-btn`) · CTA naranja « Mon assiette »
+   con disco blanco y contador. El CTA se esconde cuando « Nous trouver » está en pantalla.
+   Móvil/tablet: logo · botón plato · burger (`#nav-toggle`) que abre un panel de vidrio
+   (`#nav-drawer`, atributo `hidden`) con los links, Connexion y « Réserver une table ».
+   **Reemplaza §11** (ya no hay ☰ en todos los breakpoints ni navbar blanca).
+3. **Hero oscuro** (`#accueil`, `#111`, esquinas inferiores 48px): eyebrow, `h1` « Le grill,
+   la bière et tous les matchs » palabra por palabra (blur + subida), lead, **flama WebGL**
+   (`flame.js`, se inclina hacia el cursor, braises), sticker « De retour bientôt ! », chips
+   y botones « Commander » / « Réserver une table » (`#reserve-open`). En escritorio los bloques
+   van en coordenadas absolutas del artboard 1440×800; en móvil sin flama ni chips.
+4. **Cantine** (`#cantine`): la foto del food truck crece con `clip-path` hasta pantalla
+   completa (pin 140 %, scrub) y aparece « Du grill à ta table. ». Reemplaza `#hx-video`.
+5. **Menu** (`#menu`): **rail horizontal anclado** — `.track-runway` de 450lvh, el stage se
+   pinea y `.track` se traslada en X con el scroll. Tarjetas: « Comment ça marche » (naranja),
+   una por plato (`renderMenu()` las inserta antes de `#track-end`; foto con `object-fit:
+   contain`, nombre en Ultra, precio, botón redondo `+` que agrega a la assiette con toast) y
+   una tarjeta negra « Une table pour le prochain match ? » que abre la reserva.
+   Reemplaza el carrusel con puntos de §13.3 (ya no existe `initCarousel`).
+6. **La maison** (`#maison`): sube **por encima** del rail (`margin-top: -100lvh`, esquinas
+   48px). Banner con el render `exterior-night.jpg` en parallax + pastilla « Ouverture
+   bientôt », contadores animados (5 plats, 7/7, 1 pt, 1 h — todos salen del contenido real:
+   menú, horarios y la regla de puntos) y párrafo de la reconstrucción con frases atenuadas.
+   Sustituye la sección « Reopening » de §20.
+7. **Pourquoi nous** (`#pourquoi`): sección pineada de 100lvh con **rail arrastrable** (mouse
+   con inercia; swipe nativo en táctil, `touch-action: pan-x pan-y`) y barra de progreso
+   naranja: intro naranja + Instagram, video de música live, las 3 ventajas (iconos SVG),
+   fotos de la galería, las 3 reseñas (tarjetas negras) y « Ton prochain match, c'est ici ».
+   Junta lo que antes eran About, Gallery y Testimonials.
+8. **Nous trouver** (`#nous-trouver`): sube por encima del rail. Fondo `#111` con flama en
+   escritorio, panel de vidrio blanco con logo, dirección, contacto, horarios (la fila de hoy
+   en negrita) y « Obtenir l'itinéraire ». Ya no hay iframe de mapa.
+9. **Footer** oscuro: logo, links, « Accès personnel ».
+
+### 22.2 Reglas que cambian
+- **Dos hojas:** `style.css` (compartido con el admin — si tocas algo ahí, revisa también
+  `admin.html` y sube su `?v=`) y `site.css` (solo landing). En `site.css` los resets van con
+  `:where(body.site)` para no ganarle nunca a una clase de componente.
+- **Escala:** en la landing, desde 1024px `1rem = 1,111vw` (artboard 1440, como Flamme Up),
+  tope 21,33px desde 1920. Limitado con `html:has(body.site)` para no tocar el admin.
+- **Animación:** ya no hay `html.gsap` / `.text` / `.line` / `.reveal`. Ahora `[data-words]`
+  (palabra por palabra, se revierte al subir), `[data-reveal]` (bloque con blur),
+  `[data-hero-el]` (entrada del hero con retraso en ms), `[data-count]` (contadores).
+  Textos dentro de una sección pineada usan `pinnedContainer` en su ScrollTrigger (si no,
+  el disparo se calcula mal). Siguen sin apagarse con `prefers-reduced-motion` (§12).
+- **ScrollSmoother** igual que §13 (`normalizeScroll` solo en escritorio). Se crea pausado
+  detrás del preloader; las modales lo pausan mientras están abiertas (MutationObserver).
+  Al recargar se vuelve al hero (`scrollTop(0)` al levantar el telón) salvo con `#ancla`.
+- **Sin líneas (§6) se mantiene:** los pasos de « Comment ça marche » van en bloques, las
+  estadísticas sin borde lateral. La barra de progreso del rail es un control, no un separador.
+- **Radios:** secciones 48px, tarjetas 24px, pastillas de vidrio 10px, botones pill.
+- **Botones:** además de `.btn` (§7): `.btn--light` (blanco), `.btn--dark` (negro),
+  `.btn-cta` (pill naranja + disco blanco con icono) y `.ring` (botón redondo de tarjeta).
+- **Preview de Claude Code:** con el panel oculto `requestAnimationFrame` se congela y el
+  preloader no avanza; para inspeccionar se puede avanzar GSAP a mano con `gsap.ticker.tick()`.
+

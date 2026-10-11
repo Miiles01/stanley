@@ -51,14 +51,16 @@ function fmtPrice(n) {
     return `${Number(n).toFixed(2).replace('.', ',')} $`;
 }
 
+
 // DOM Elements
-const menuGrid = document.getElementById('menu-grid');
-const cartBtn = document.getElementById('cart-btn');
+const track = document.getElementById('track');
+const trackEnd = document.getElementById('track-end');
 const authBtn = document.getElementById('auth-btn');
+const drawerAuthBtn = document.querySelector('[data-open-auth]');
 const cartModal = document.getElementById('cart-modal');
 const authModal = document.getElementById('auth-modal');
 const closeBtns = document.querySelectorAll('.close-btn');
-const cartCount = document.getElementById('cart-count');
+const cartCounts = document.querySelectorAll('[data-cart-count]');
 const cartItems = document.getElementById('cart-items');
 const cartTotalPrice = document.getElementById('cart-total-price');
 const checkoutBtn = document.getElementById('checkout-btn');
@@ -71,107 +73,48 @@ const logoutBtn = document.getElementById('logout-btn');
 const nameInput = document.getElementById('auth-name');
 const emailInput = document.getElementById('auth-email');
 
-// Render Menu
+// Menu : une carte par plat dans le rail horizontal (entre « Comment ça marche » et la carte de fin)
 function renderMenu() {
-    menuGrid.innerHTML = products.map(p => `
-        <div class="menu-item reveal">
-            <div class="menu-item-photo">
-                <img src="${p.img}" alt="${p.name}" loading="lazy" />
+    const cards = products.map((p, i) => `
+        <article class="card card--dish">
+            <p class="card__index">${String(i + 2).padStart(2, '0')}</p>
+            <div class="card__photo"><img src="${p.img}" alt="${p.name}" loading="lazy" draggable="false" /></div>
+            <div class="card__top">
+                <h3 class="card__title">${p.name}</h3>
+                <p class="card__desc">${p.desc}</p>
             </div>
-            <div class="menu-item-body">
-                <h3 class="text">${p.name}</h3>
-                <p>${p.desc}</p>
-                <div class="menu-item-footer">
-                    <span class="price">${fmtPrice(p.price)}</span>
-                    <button class="btn primary-btn add-to-cart" data-id="${p.id}">Ajouter</button>
-                </div>
+            <div class="card__bottom">
+                <span class="card__price">${fmtPrice(p.price)}</span>
+                <button type="button" class="ring add-to-cart" data-id="${p.id}" aria-label="Ajouter ${p.name} à mon assiette"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
             </div>
-        </div>
+        </article>
     `).join('');
+    trackEnd.insertAdjacentHTML('beforebegin', cards);
 
-    document.querySelectorAll('.add-to-cart').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const id = parseInt(e.target.getAttribute('data-id'));
-            addToCart(id);
-        });
+    track.addEventListener('click', (e) => {
+        const btn = e.target.closest('.add-to-cart');
+        if (!btn) return;
+        addToCart(parseInt(btn.dataset.id, 10));
+        btn.classList.add('is-added');
+        btn.innerHTML = '<svg aria-hidden="true"><use href="#i-check"/></svg>';
+        setTimeout(() => {
+            btn.classList.remove('is-added');
+            btn.innerHTML = '<svg aria-hidden="true"><use href="#i-plus"/></svg>';
+        }, 1200);
     });
 }
 
-// Carrousels horizontaux : points de pagination + glisser à la souris (bureau).
-// Le défilement reste celui du navigateur (scroll-snap) : swipe natif sur mobile.
-function initCarousel(track) {
-    if (!track || track.dataset.carousel) return;
-    track.dataset.carousel = '1';
-    const items = () => [...track.children];
-    const label = track.getAttribute('aria-label') || 'Carrousel';
-
-    const dots = document.createElement('div');
-    dots.className = 'carousel-dots';
-    dots.setAttribute('role', 'group');
-    dots.setAttribute('aria-label', label + ' : aller à une image');
-    track.after(dots);
-
-    const buildDots = () => {
-        dots.innerHTML = items().map((_, i) =>
-            `<button type="button" class="carousel-dot" aria-label="Élément ${i + 1} sur ${items().length}"></button>`).join('');
-        update();
-    };
-    const current = () => {
-        const left = track.scrollLeft;
-        let best = 0, dist = Infinity;
-        items().forEach((el, i) => {
-            const d = Math.abs(el.offsetLeft - track.offsetLeft - left);
-            if (d < dist) { dist = d; best = i; }
-        });
-        // Au bout du rail, le dernier point s'allume même si l'élément ne peut pas s'aligner à gauche.
-        if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 4) best = items().length - 1;
-        return best;
-    };
-    let raf = 0;
-    function update() {
-        raf = 0;
-        const i = current();
-        [...dots.children].forEach((d, k) => d.setAttribute('aria-current', k === i ? 'true' : 'false'));
-        // Pas de points si tout tient à l'écran.
-        dots.hidden = track.scrollWidth <= track.clientWidth + 4;
-    }
-    track.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
-    window.addEventListener('resize', () => { if (!raf) raf = requestAnimationFrame(update); });
-    dots.addEventListener('click', (e) => {
-        const b = e.target.closest('.carousel-dot');
-        if (!b) return;
-        const el = items()[[...dots.children].indexOf(b)];
-        track.scrollTo({ left: el.offsetLeft - track.offsetLeft, behavior: 'smooth' });
-    });
-
-    // Glisser à la souris (les écrans tactiles utilisent le swipe natif).
-    let down = false, startX = 0, startLeft = 0, moved = false;
-    track.addEventListener('pointerdown', (e) => {
-        if (e.pointerType !== 'mouse' || e.button !== 0) return;
-        down = true; moved = false; startX = e.clientX; startLeft = track.scrollLeft;
-        track.classList.add('is-dragging');
-    });
-    window.addEventListener('pointermove', (e) => {
-        if (!down) return;
-        const dx = e.clientX - startX;
-        if (Math.abs(dx) > 5) moved = true;
-        track.scrollLeft = startLeft - dx;
-    });
-    window.addEventListener('pointerup', () => {
-        if (!down) return;
-        down = false;
-        track.classList.remove('is-dragging');
-        // Laisse le snap reprendre la main pour aligner la carte la plus proche.
-        const el = items()[current()];
-        track.scrollTo({ left: el.offsetLeft - track.offsetLeft, behavior: 'smooth' });
-    });
-    // Un glisser ne doit pas déclencher le bouton « Ajouter » sous la souris.
-    track.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
-    track.addEventListener('dragstart', (e) => e.preventDefault());
-
-    buildDots();
-    new MutationObserver(buildDots).observe(track, { childList: true });
+// Petit message en bas de l'écran
+const toast = document.getElementById('toast');
+let toastTimer = 0;
+function showToast(msg) {
+    toast.innerHTML = `<svg aria-hidden="true"><use href="#i-check"/></svg><span></span>`;
+    toast.querySelector('span').textContent = msg;
+    toast.classList.add('is-on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('is-on'), 2200);
 }
+
 
 // Cart Logic
 function addToCart(id) {
@@ -183,9 +126,12 @@ function addToCart(id) {
         cart.push({ ...product, quantity: 1 });
     }
     updateCart();
-    // Simple visual feedback
-    cartBtn.style.transform = 'scale(1.1)';
-    setTimeout(() => cartBtn.style.transform = 'scale(1)', 200);
+    cartCounts.forEach(el => {
+        el.classList.remove('is-bump');
+        void el.offsetWidth; // relance l'animation
+        el.classList.add('is-bump');
+    });
+    showToast(`${product.name} — ajouté à ton assiette`);
 }
 
 function removeFromCart(id) {
@@ -197,8 +143,10 @@ function removeFromCart(id) {
 function updateCart() {
     localStorage.setItem('brasserie_cart', JSON.stringify(cart));
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    cartCount.innerText = count;
-    cartCount.classList.toggle('is-empty', count === 0);
+    cartCounts.forEach(el => {
+        el.textContent = count;
+        el.classList.toggle('is-empty', count === 0);
+    });
 }
 
 function renderCartItems() {
@@ -261,6 +209,7 @@ function updateAuthUI() {
         const fresh = Store.getUserByEmail(user.email);
         if (fresh) user.points = fresh.points || 0;
         authBtn.innerText = 'Mon compte';
+        drawerAuthBtn.innerText = 'Mon compte';
         authFormContainer.classList.add('hidden');
         userDashboard.classList.remove('hidden');
         authTitle.innerText = 'Mon compte';
@@ -268,6 +217,7 @@ function updateAuthUI() {
         document.getElementById('loyalty-points').innerText = user.points;
     } else {
         authBtn.innerText = 'Connexion';
+        drawerAuthBtn.innerText = 'Connexion';
         authFormContainer.classList.remove('hidden');
         userDashboard.classList.add('hidden');
         authTitle.innerText = 'Connexion / Inscription';
@@ -300,10 +250,11 @@ function logout() {
 }
 
 // Event Listeners
-cartBtn.addEventListener('click', () => {
+document.querySelectorAll('[data-open-cart]').forEach(btn => btn.addEventListener('click', () => {
+    closeMobileMenu();
     renderCartItems();
     cartModal.classList.remove('hidden');
-});
+}));
 
 // Demo helper: prefill the join/login form with a random test user
 const TEST_FIRST_NAMES = ["Gabriel", "Léa", "Félix", "Camille", "Antoine", "Rosalie", "Olivier", "Charlotte", "Émile", "Florence", "Simon", "Maude"];
@@ -332,7 +283,10 @@ function openAuthModal() {
     authModal.classList.remove('hidden');
 }
 
+
 authBtn.addEventListener('click', openAuthModal);
+drawerAuthBtn.addEventListener('click', () => { closeMobileMenu(); openAuthModal(); });
+
 
 closeBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -350,38 +304,26 @@ checkoutBtn.addEventListener('click', checkout);
 loginSubmitBtn.addEventListener('click', login);
 logoutBtn.addEventListener('click', logout);
 
-// Hamburger menu (About / Gallery / Reserve) — drops open from under the navbar
+// Menu mobile (burger) : panneau de verre sous l'en-tête
 const navToggle = document.getElementById('nav-toggle');
 const navDrawer = document.getElementById('nav-drawer');
-let drawerOpen = false;
 
-function setNavDrawer(open) {
-    if (open === drawerOpen) return;
-    drawerOpen = open;
-    navDrawer.classList.toggle('open', open);
-    navToggle.classList.toggle('is-open', open);
-    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    navToggle.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+function closeMobileMenu() {
+    if (navDrawer.hidden) return;
+    navDrawer.hidden = true;
+    navToggle.setAttribute('aria-expanded', 'false');
+    navToggle.setAttribute('aria-label', 'Ouvrir le menu');
 }
 
-navToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    setNavDrawer(!drawerOpen);
+navToggle.addEventListener('click', () => {
+    const open = navDrawer.hidden;
+    navDrawer.hidden = !open;
+    navToggle.setAttribute('aria-expanded', String(open));
+    navToggle.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
 });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMobileMenu(); });
+document.addEventListener('click', (e) => { if (!e.target.closest('#nav-drawer, #nav-toggle')) closeMobileMenu(); });
 
-navDrawer.querySelectorAll('a, button').forEach(link => {
-    link.addEventListener('click', () => setNavDrawer(false));
-});
-
-document.addEventListener('click', (e) => {
-    if (drawerOpen && !navDrawer.contains(e.target) && !navToggle.contains(e.target)) {
-        setNavDrawer(false);
-    }
-});
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') setNavDrawer(false);
-});
 
 // ===== Reserve a table (demo) =====
 const reserveModal = document.getElementById('reserve-modal');
@@ -405,7 +347,7 @@ document.getElementById('res-minus').addEventListener('click', () => setParty(pa
 document.getElementById('res-plus').addEventListener('click', () => setParty(partySize + 1));
 
 function openReserveModal() {
-    setNavDrawer(false);
+    closeMobileMenu();
     reserveForm.classList.remove('hidden');
     reserveSuccess.classList.add('hidden');
     resError.classList.add('hidden');
@@ -423,7 +365,6 @@ function openReserveModal() {
     reserveModal.classList.remove('hidden');
 }
 
-document.getElementById('reserve-open').addEventListener('click', openReserveModal);
 
 reserveForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -466,211 +407,347 @@ reserveForm.addEventListener('submit', (e) => {
 document.getElementById('res-done').addEventListener('click', () => {
     reserveModal.classList.add('hidden');
 });
-
-// ===== Smooth scroll for in-page anchors =====
-// ScrollSmoother (set up in initAnimations) drives this when available; the rAF
-// tween below is the fallback if the plugin didn't load.
+// =====================================================================
+// Landing — mise en scène reprise de Flamme Up (GSAP + ScrollTrigger + ScrollSmoother)
+// Preloader → hero mot à mot → photo qui s'agrandit → menu en rail épinglé →
+// « La maison » glisse par-dessus avec compteurs → rail glissable épinglé →
+// « Nous trouver » glisse par-dessus.
+// =====================================================================
+const hasGsap = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 let smoother = null;
 
-function navOffset() {
-    const nav = document.querySelector('.navbar');
-    return (nav ? nav.offsetHeight : 0) + 8;
-}
+document.getElementById('year').textContent = new Date().getFullYear();
 
-function fallbackScrollTo(target) {
-    const startY = window.scrollY;
-    const destY = target === 0
-        ? 0
-        : Math.max(0, target.getBoundingClientRect().top + startY - navOffset());
-    const distance = destY - startY;
-    const duration = Math.min(900, Math.max(350, Math.abs(distance) * 0.5));
-    let startTime = null;
-    const easeInOutQuad = t => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
-    function frame(now) {
-        if (startTime === null) startTime = now;
-        const progress = Math.min((now - startTime) / duration, 1);
-        window.scrollTo(0, startY + distance * easeInOutQuad(progress));
-        if (progress < 1) requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
-}
-
+// ----- Ancres internes et boutons « Réserver » -----
 function scrollToTarget(target) {
-    if (smoother) {
-        smoother.scrollTo(target, true, target === 0 ? 'top top' : 'top ' + navOffset() + 'px');
-    } else {
-        fallbackScrollTo(target);
-    }
+    const go = () => {
+        if (smoother) smoother.scrollTo(target, true, 'top top');
+        else target.scrollIntoView({ behavior: 'smooth' });
+    };
+    go();
 }
 
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener('click', (e) => {
-        const hash = link.getAttribute('href');
-        setNavDrawer(false);
-        if (hash === '#reserve' || link.hasAttribute('data-reserve')) {
-            e.preventDefault();
-            openReserveModal();
-            return;
-        }
-        if (hash === '#' || hash === '') {
-            e.preventDefault();
-            scrollToTarget(0);
-            history.replaceState(null, '', location.pathname + location.search);
-            return;
-        }
-        const target = document.getElementById(hash.slice(1));
-        if (!target) return;
+document.addEventListener('click', (e) => {
+    const reserve = e.target.closest('[data-reserve], #reserve-open');
+    if (reserve) {
         e.preventDefault();
-        scrollToTarget(target);
-        history.pushState(null, '', hash);
-    });
+        closeMobileMenu();
+        openReserveModal();
+        return;
+    }
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const target = document.getElementById(a.getAttribute('href').slice(1));
+    if (!target) return;
+    e.preventDefault();
+    closeMobileMenu();
+    scrollToTarget(target);
+    history.replaceState(null, '', a.getAttribute('href'));
 });
 
-// ===== Entrance animations (GSAP) =====
-// Animatable elements start hidden via CSS (html.gsap .reveal/.line/.text { opacity:0 }),
-// applied before first paint, so nothing flashes visible-then-hidden. GSAP animates
-// them in on scroll with fromTo (explicit start + end, no snapshot guesswork).
-// .text   -> headings (h1/h2/h3): word-by-word reveal
-// .line   -> paragraphs / descriptions: rise + fade, staggered per on-screen group
-// .reveal -> cards & media: fade + rise on scroll — DESKTOP/TABLET ONLY (>768px).
-//            Skipped on phones on purpose (it stuttered there); mobile just renders them.
-function initAnimations() {
-    const root = document.documentElement;
-    const isMobile = window.innerWidth <= 768;
+// Une modale ouverte met le scroll lissé en pause (sinon la page défile derrière).
+const modals = $$('.modal');
+const modalWatch = new MutationObserver(() => {
+    const open = modals.some(m => !m.classList.contains('hidden'));
+    if (smoother) smoother.paused(open);
+});
+modals.forEach(m => modalWatch.observe(m, { attributes: true, attributeFilter: ['class'] }));
 
-    // GSAP unavailable -> drop the hide class so everything is simply visible
-    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-        root.classList.remove('gsap');
-        return;
-    }
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Page-wide smooth scrolling (momentum), all breakpoints.
-    if (typeof ScrollSmoother !== 'undefined') {
-        gsap.registerPlugin(ScrollSmoother);
-        smoother = ScrollSmoother.create({
-            wrapper: '#smooth-wrapper',
-            content: '#smooth-content',
-            smooth: 1.3,
-            effects: false,
-            // Sur écran tactile, normalizeScroll bloquait tous les touchmove : les
-            // carrousels horizontaux ne glissaient plus. On le garde au bureau seulement ;
-            // smoothTouch garde un léger lissage sur mobile sans voler les gestes.
-            normalizeScroll: !ScrollTrigger.isTouch,
-            smoothTouch: 0.1
-        });
-    }
-
-    if (typeof SplitText !== 'undefined') {
-        gsap.registerPlugin(SplitText);
-        gsap.utils.toArray('.text').forEach(el => {
-            const split = SplitText.create(el, { type: 'words' });
-            gsap.set(split.words, { opacity: 0, y: 15 });
-            ScrollTrigger.create({
-                trigger: el,
-                start: 'top 85%',
-                once: true,
-                onEnter: () => {
-                    gsap.set(el, { opacity: 1 }); // clear the CSS hide on the heading itself
-                    gsap.to(split.words, {
-                        opacity: 1,
-                        y: 0,
-                        stagger: 0.06,
-                        duration: 0.5,
-                        ease: 'power2.out'
-                    });
-                }
-            });
-        });
-    }
-
-    ScrollTrigger.batch('.line', {
-        start: 'top 88%',
-        once: true,
-        onEnter: batch => gsap.fromTo(batch,
-            { opacity: 0, y: 30 },
-            { opacity: 1, y: 0, stagger: 0.2, duration: 0.8, ease: 'power2.out', overwrite: true }
-        )
+// ----- Heures : la ligne du jour en gras -----
+(function markToday() {
+    const today = new Date().getDay();
+    $$('#hours li').forEach(li => {
+        li.classList.toggle('is-today', li.dataset.days.split(',').map(Number).includes(today));
     });
+})();
 
-    // .reveal (cards & media) — desktop/tablet only, omitted on mobile.
-    if (!isMobile) {
-        ScrollTrigger.batch('.reveal', {
-            start: 'top 90%',
-            once: true,
-            onEnter: batch => gsap.fromTo(batch,
-                { opacity: 0, y: 24 },
-                { opacity: 1, y: 0, stagger: 0.12, duration: 0.7, ease: 'power2.out', overwrite: true }
-            )
+// ----- Texte mot à mot -----
+function splitWords(el) {
+    if (el.dataset.split) return $$('.wi', el);
+    el.dataset.split = '1';
+    const walk = (node) => {
+        [...node.childNodes].forEach((child) => {
+            if (child.nodeType === 3) {
+                const frag = document.createDocumentFragment();
+                child.textContent.split(/(\s+)/).forEach((part) => {
+                    if (!part) return;
+                    if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
+                    const w = document.createElement('span'); w.className = 'w';
+                    const i = document.createElement('span'); i.className = 'wi'; i.textContent = part;
+                    w.appendChild(i); frag.appendChild(w);
+                });
+                child.replaceWith(frag);
+            } else if (child.nodeType === 1) walk(child);
         });
-    }
-
-    // Failsafe: reveal anything that is on screen but still hidden a few seconds
-    // after load (e.g. a stalled tween in a throttled tab). Off-screen elements
-    // are left alone so their scroll animation still plays.
-    setTimeout(() => {
-        document.querySelectorAll('.line, .text, .reveal').forEach(el => {
-            const r = el.getBoundingClientRect();
-            const onScreen = r.top < window.innerHeight && r.bottom > 0;
-            if (onScreen && parseFloat(getComputedStyle(el).opacity) < 0.95) {
-                gsap.set(el, { opacity: 1, y: 0 });
-                el.querySelectorAll('*').forEach(child => gsap.set(child, { opacity: 1, y: 0 }));
-            }
-        });
-    }, 4000);
+    };
+    walk(el);
+    el.setAttribute('aria-label', el.textContent.replace(/\s+/g, ' ').trim());
+    return $$('.wi', el);
 }
 
-// ===== Hero (façon Tulum) + photo de la cantine qui s'agrandit au scroll =====
-function initHero() {
-    const hero = document.getElementById('hx-hero');
-    if (!hero) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const WORD_FROM = { yPercent: 110, opacity: 0, filter: 'blur(10px)' };
+const WORD_TO = { yPercent: 0, opacity: 1, filter: 'blur(0px)', ease: 'power3.out' };
 
-    // « Chez » / « Stanley » : une <span> par lettre, décalée par --i.
-    let i = 0;
-    hero.querySelectorAll('[data-letters]').forEach(word => {
-        word.innerHTML = [...word.textContent].map(ch =>
-            `<span class="hx-letter"><span style="--i:${i++}">${ch}</span></span>`).join('');
+function wordTween(el, delay = 0) {
+    const words = splitWords(el);
+    const heading = /^H[1-3]$/.test(el.tagName);
+    gsap.set(words, WORD_FROM);
+    return gsap.to(words, { ...WORD_TO, duration: heading ? 1 : 0.8, stagger: heading ? 0.055 : 0.02, delay, paused: true });
+}
+
+function setupReveals() {
+    // Titres et paragraphes (hors hero, qui attend le rideau).
+    // Les textes dans une section épinglée déclarent leur conteneur, sinon le départ est mal mesuré.
+    $$('[data-words]').filter(el => !el.closest('[data-hero]')).forEach(el => {
+        const tw = wordTween(el);
+        const pinned = el.closest('#track-stage, #pourquoi');
+        ScrollTrigger.create({
+            trigger: el, start: 'top 88%', pinnedContainer: pinned || undefined,
+            onEnter: () => tw.play(), onLeaveBack: () => tw.reverse()
+        });
     });
-    const start = () => requestAnimationFrame(() => hero.classList.add('is-in'));
-    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(start);
-    setTimeout(start, 1500); // au cas où les polices tardent
+    $$('[data-reveal]').forEach(el => {
+        gsap.set(el, { opacity: 0, y: 20, filter: 'blur(10px)' });
+        ScrollTrigger.create({
+            trigger: el, start: 'top 90%',
+            onEnter: () => gsap.to(el, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.8, ease: 'power3.out' }),
+            onLeaveBack: () => gsap.to(el, { opacity: 0, y: 20, filter: 'blur(10px)', duration: 0.4 })
+        });
+    });
+}
 
-    // Média (photo de la cantine) + phrase qui apparaît mot par mot.
-    const video = document.getElementById('hx-video-el');
-    const heading = document.getElementById('hx-video-heading');
+function prepareHero() {
+    $$('[data-hero] [data-words]').forEach(el => gsap.set(splitWords(el), WORD_FROM));
+    gsap.set('[data-hero-el]', { opacity: 0, y: 20, filter: 'blur(10px)' });
+}
+
+function heroEntrance() {
+    $$('[data-hero] [data-words]').forEach((el, i) => wordTween(el, i * 0.12).play());
+    $$('[data-hero-el]').forEach(el => {
+        gsap.to(el, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.9, ease: 'power3.out', delay: Number(el.dataset.heroEl) / 1000 + 0.15 });
+    });
+}
+
+// ----- Menu : rail horizontal épinglé -----
+function setupTrack() {
+    const runway = $('#track-runway');
+    const stage = $('#track-stage');
+    const OVERLAY = 1, DWELL = 1; // écrans : « La maison » glisse par-dessus pendant le dernier
+
+    ScrollTrigger.create({ trigger: runway, start: 'top top', end: 'bottom bottom', pin: stage, pinSpacing: false });
+
+    gsap.to(track, {
+        x: () => -Math.max(track.scrollWidth - (stage.clientWidth - track.offsetLeft), 0),
+        ease: 'none',
+        scrollTrigger: {
+            trigger: runway,
+            start: 'top top',
+            end: () => `+=${runway.offsetHeight - window.innerHeight * (1 + OVERLAY + DWELL)}`,
+            scrub: 0.8,
+            invalidateOnRefresh: true
+        }
+    });
+}
+
+// ----- Photo de la cantine qui s'agrandit -----
+function setupReel() {
+    const frame = $('#reel-frame');
     const mobile = window.matchMedia('(max-width: 767px)').matches;
+    const from = mobile ? 'inset(24% 8% 24% 8% round 24px)' : 'inset(22% 28% 22% 28% round 24px)';
+    const tl = gsap.timeline({
+        scrollTrigger: { trigger: '#reel-stage', start: 'top top', end: '+=140%', pin: true, scrub: 0.6, anticipatePin: 1 }
+    });
+    tl.fromTo(frame, { clipPath: from }, { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'none', duration: 1 })
+        .fromTo('#reel-media', { scale: 1.18 }, { scale: 1, ease: 'none', duration: 1 }, 0)
+        .fromTo('#reel-caption', { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.3 }, 0.75)
+        .to({}, { duration: 0.25 }); // petite pause en plein écran avant de reprendre le scroll
+}
 
-    heading.innerHTML = heading.textContent.split(' ')
-        .map((w, k) => `<span class="hx-vword" style="transition-delay:${k * 60}ms">${w} </span>`).join('');
+// ----- Bannière en parallaxe -----
+function setupBanner() {
+    gsap.fromTo('#about-banner-inner', { yPercent: -8 }, {
+        yPercent: 8, ease: 'none',
+        scrollTrigger: { trigger: '#about-banner', start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+}
 
-    if (mobile || reduced || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-        new IntersectionObserver(([e]) => {
-            if (e.isIntersecting) heading.classList.add('is-in');
-        }, { threshold: 0.4 }).observe(heading);
-        return;
+// ----- Compteurs -----
+function setupCounters() {
+    $$('[data-count]').forEach(el => {
+        const m = /^(\D*)(\d+)(.*)$/.exec(el.dataset.count);
+        if (!m) return;
+        const [, pre, num, suf] = m;
+        const obj = { v: 0 };
+        el.setAttribute('aria-label', el.dataset.count);
+        const render = () => { el.textContent = `${pre}${Math.round(obj.v)}${suf}`; };
+        render();
+        ScrollTrigger.create({
+            trigger: el, start: 'top 90%',
+            onEnter: () => gsap.to(obj, { v: Number(num), duration: 1.8, ease: 'power2.out', onUpdate: render }),
+            onLeaveBack: () => gsap.to(obj, { v: 0, duration: 0.6, onUpdate: render })
+        });
+    });
+}
+
+// ----- « Pourquoi nous » : rail glissable (souris) + swipe natif (tactile) -----
+function setupRail() {
+    const rail = $('#rail');
+    const fill = $('#rail-fill');
+    const MIN = 0.3;
+    let dragging = false, moved = false, startX = 0, startScroll = 0, target = null, vel = 0, lastX = 0, raf = 0;
+
+    const sync = () => {
+        const max = rail.scrollWidth - rail.clientWidth;
+        if (max > 0) fill.style.transform = `scaleX(${MIN + (1 - MIN) * (rail.scrollLeft / max)})`;
+    };
+    const clamp = (v) => Math.min(Math.max(v, 0), rail.scrollWidth - rail.clientWidth);
+    const loop = () => {
+        raf = 0;
+        if (target === null) return;
+        const d = target - rail.scrollLeft;
+        if (!dragging && Math.abs(d) < 0.5) { target = null; return; }
+        rail.scrollLeft += d * 0.18;
+        raf = requestAnimationFrame(loop);
+    };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(loop); };
+
+    rail.addEventListener('scroll', sync, { passive: true });
+    rail.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        e.preventDefault();
+        dragging = true; moved = false;
+        startX = lastX = e.clientX; startScroll = rail.scrollLeft; target = rail.scrollLeft; vel = 0;
+        rail.setPointerCapture(e.pointerId); rail.classList.add('is-dragging');
+        kick();
+    });
+    rail.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 4) moved = true;
+        vel = lastX - e.clientX; lastX = e.clientX;
+        target = clamp(startScroll - dx);
+    });
+    const end = (e) => {
+        if (!dragging) return;
+        dragging = false; rail.classList.remove('is-dragging');
+        if (rail.hasPointerCapture(e.pointerId)) rail.releasePointerCapture(e.pointerId);
+        target = clamp((target ?? rail.scrollLeft) + vel * 14);
+        kick();
+    };
+    rail.addEventListener('pointerup', end);
+    rail.addEventListener('pointercancel', end);
+    // Un glisser ne doit pas déclencher le lien sous la souris.
+    rail.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+    sync();
+
+    if (hasGsap) {
+        // Section épinglée : « Nous trouver » glisse par-dessus.
+        ScrollTrigger.create({ trigger: '#pourquoi', start: 'top top', end: '+=100%', pin: true, pinSpacing: false });
     }
+}
 
-    // Bureau/tablette : la carte grandit pendant que la section monte, puis reste épinglée
-    // un écran le temps que la phrase apparaisse (même chorégraphie que Tulum).
-    const box = document.getElementById('hx-video-box');
-    const grow = { trigger: '#hx-video', start: 'top 85%', end: 'top top', scrub: 0.6 };
-    gsap.fromTo(box, { clipPath: 'inset(24% 27% 24% 27% round 28px)' },
-        { clipPath: 'inset(2.5% 1.6% 2.5% 1.6% round 18px)', ease: 'none', scrollTrigger: grow });
-    gsap.fromTo(video, { scale: 1.25 }, { scale: 1, ease: 'none', scrollTrigger: { ...grow } });
-    ScrollTrigger.create({ trigger: '#hx-video', start: 'top top', end: '+=100%', pin: '#hx-video-stage' });
-    ScrollTrigger.create({
-        trigger: '#hx-video', start: 'top -15%',
-        onEnter: () => heading.classList.add('is-in'),
-        onLeaveBack: () => heading.classList.remove('is-in')
+// ----- CTA de l'en-tête : se cache quand « Nous trouver » est à l'écran -----
+function setupHeaderCta() {
+    const cta = $('.header-cta');
+    new IntersectionObserver(([e]) => cta.classList.toggle('is-hidden', e.isIntersecting), { threshold: 0.35 }).observe($('#nous-trouver'));
+}
+
+// ----- Preloader -----
+function boot() {
+    const pre = $('#preloader');
+    const ring = $('#preloader-progress');
+    const fillMark = $('#preloader-fill');
+    const pct = $('#preloader-pct');
+    const CIRC = 2 * Math.PI * 180;
+    const prog = { v: 0 };
+    const paint = () => {
+        ring.style.strokeDashoffset = CIRC * (1 - prog.v);
+        fillMark.style.clipPath = `inset(${(1 - prog.v) * 100}% 0 0 0)`;
+        pct.textContent = `${Math.round(prog.v * 100)}%`;
+    };
+
+    if (!hasGsap) { pre.remove(); return; }
+
+    // Toujours repartir du haut au rechargement (le rideau révèle le hero).
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+
+    gsap.registerPlugin(ScrollTrigger);
+    document.body.classList.add('is-locked');
+    prepareHero();
+    const creep = gsap.to(prog, { v: 0.85, duration: 2.6, ease: 'power1.out', onUpdate: paint });
+
+    let firstFrame;
+    const flameReady = new Promise(r => { firstFrame = r; });
+    $$('canvas[data-flame]').forEach(c => {
+        const isHero = c.dataset.flame === 'hero';
+        // Canvas masqué (mobile) : pas de contexte WebGL, rien à rendre.
+        if (!c.offsetParent) { if (isHero) firstFrame(); return; }
+        const scene = window.FlameScene && window.FlameScene.createFlame(c, {
+            scale: isHero ? 0.82 : 0.75,
+            onFirstFrame: isHero ? firstFrame : null
+        });
+        if (isHero && !scene) firstFrame();
+    });
+
+    const timeout = new Promise(r => setTimeout(r, 3500));
+    const loaded = Promise.all([flameReady, document.fonts ? document.fonts.ready : null]);
+
+    Promise.race([loaded, timeout]).then(() => {
+        if (typeof ScrollSmoother !== 'undefined') {
+            gsap.registerPlugin(ScrollSmoother);
+            smoother = ScrollSmoother.create({
+                wrapper: '#smooth-wrapper',
+                content: '#smooth-content',
+                smooth: 1.3,
+                effects: false,
+                // Sur écran tactile, normalizeScroll bloquait tous les touchmove : le rail
+                // horizontal ne glissait plus. On le garde au bureau seulement.
+                normalizeScroll: !ScrollTrigger.isTouch,
+                smoothTouch: 0.1
+            });
+            smoother.paused(true);
+        }
+        setupReel();
+        setupTrack();
+        setupBanner();
+        setupCounters();
+        setupReveals();
+        setupRail();
+        setupHeaderCta();
+        ScrollTrigger.refresh();
+
+        // Lien profond (#menu, etc.) une fois tout mesuré.
+        const deep = location.hash && document.getElementById(location.hash.slice(1));
+
+        creep.kill();
+        gsap.to(prog, {
+            v: 1, duration: 0.5, ease: 'power2.out', onUpdate: paint,
+            onComplete: () => {
+                let released = false;
+                gsap.to(pre, {
+                    clipPath: 'inset(0% 0% 100% 0%)', duration: 0.9, ease: 'power3.inOut', delay: 0.25,
+                    onUpdate() {
+                        if (released || this.progress() <= 0.45) return;
+                        released = true;
+                        document.body.classList.remove('is-locked');
+                        if (smoother) smoother.paused(false);
+                        // Le navigateur peut restaurer l'ancienne position : on repart du hero.
+                        if (!deep) { if (smoother) smoother.scrollTop(0); else window.scrollTo(0, 0); }
+                        heroEntrance();
+                        if (deep) setTimeout(() => scrollToTarget(deep), 50);
+                    },
+                    onComplete: () => pre.remove()
+                });
+            }
+        });
     });
 }
 
 // Init
 renderMenu();
-initCarousel(document.getElementById('menu-grid'));
-initCarousel(document.querySelector('.reopening-gallery'));
 updateCart();
 updateAuthUI();
-initAnimations();
-initHero();
+boot();

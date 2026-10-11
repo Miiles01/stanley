@@ -4,274 +4,344 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chez Stanley — Resto-bar sportif</title>
-    <!-- Mark JS on before first paint so animatable elements start hidden (no flash). -->
-    <script>document.documentElement.classList.add('gsap');</script>
-    <link rel="stylesheet" href="style.css?v=66">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Ultra&display=swap" rel="stylesheet">
+    <meta name="description" content="Comfort food, bière locale bien froide et tous les matchs sur grand écran. Le resto-bar sportif de Sherbrooke.">
+    <meta name="theme-color" content="#111111">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Ultra&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=67">
+    <link rel="stylesheet" href="site.css?v=2">
 </head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="#" class="nav-brand" aria-label="Chez Stanley — accueil">
-            <img src="images/logo.png?v=1" alt="Chez Stanley" />
-        </a>
-        <div class="nav-links">
-            <a href="#menu">Menu</a>
-            <div class="nav-drawer" id="nav-drawer">
-                <a href="#about">À propos</a>
-                <a href="#gallery">Galerie</a>
-                <a href="#reserve" data-reserve>Réserver</a>
+<body class="site">
+
+    <!-- Preloader : rideau orange qui se lève quand la scène est prête -->
+    <div class="preloader" id="preloader" aria-hidden="true">
+        <div class="preloader__ring">
+            <svg viewBox="0 0 400 400" class="preloader__svg"><circle cx="200" cy="200" r="180" class="preloader__track"/><circle cx="200" cy="200" r="180" class="preloader__progress" id="preloader-progress"/></svg>
+            <div class="preloader__mark">
+                <span class="logo-mono preloader__logo preloader__logo--ghost"></span>
+                <div class="preloader__fill" id="preloader-fill"><span class="logo-mono preloader__logo"></span></div>
             </div>
-            <button id="auth-btn" class="nav-btn">Connexion</button>
-            <button id="cart-btn" class="nav-btn plate-btn" aria-label="Votre assiette">
-                <svg class="plate-icon" viewBox="-3 -2 58 47" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M26 7.667a24 24 0 0 0-24 24h48a24 24 0 0 0-24-24Z" />
-                    <line x1="2" y1="40.333" x2="50" y2="40.333" />
-                    <line x1="26" y1="2" x2="26" y2="7.667" />
-                </svg>
-                <span id="cart-count" class="plate-count is-empty">0</span>
-            </button>
-            <button class="nav-toggle" id="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-drawer">
-                <span></span><span></span><span></span>
-            </button>
         </div>
-    </nav>
+        <p class="preloader__pct" id="preloader-pct">0%</p>
+    </div>
 
-    <div id="smooth-wrapper">
-    <div id="smooth-content">
-
-    <!-- Hero — titre animé (même principe que Tulum) : mot qui défile + « Chez Stanley » lettre par lettre -->
-    <header class="hx-hero" id="hx-hero">
-        <h1 class="hx-title" aria-label="Chez Stanley — soirée de match, bière bien froide et comfort food">
-            <span class="hx-rotator" aria-hidden="true">
-                <span class="hx-word">Soirée de match</span>
-                <span class="hx-word">Bière bien froide</span>
-                <span class="hx-word">Comfort food</span>
-            </span>
-            <span class="hx-main" aria-hidden="true">
-                <span class="hx-name" data-letters>Chez</span>
-                <span class="hx-name" data-letters>Stanley</span>
-                <span class="hx-sticker">De retour bientôt !</span>
-            </span>
-        </h1>
-        <p class="hx-lead">Comfort food, bière locale bien froide et tous les matchs sur grand écran. Le resto-bar sportif de Sherbrooke.</p>
-        <div class="hx-actions">
-            <button type="button" class="hx-btn-secondary" id="reserve-open"><span>Réserver une table</span></button>
-            <a href="#menu" class="hx-btn-primary">
-                <span>Commander</span>
-                <span class="hx-btn-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                </span>
+    <!-- En-tête : hors du wrapper ScrollSmoother pour rester fixe -->
+    <header class="site-header">
+        <div class="site-header__left">
+            <a href="#accueil" class="glass brand" aria-label="Chez Stanley — retour à l'accueil">
+                <img class="brand__logo" src="images/logo.png?v=1" alt="" width="600" height="283">
             </a>
+            <nav class="glass nav" aria-label="Navigation principale">
+                <ul>
+                    <li><a href="#menu">Menu</a></li>
+                    <li><a href="#maison">La maison</a></li>
+                    <li><a href="#pourquoi">Pourquoi nous</a></li>
+                    <li><a href="#nous-trouver">Nous trouver</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="site-header__right">
+            <button type="button" id="auth-btn" class="glass header-pill">Connexion</button>
+            <button type="button" class="btn-cta header-cta" data-open-cart>
+                <span>Mon assiette</span>
+                <span class="btn-cta__disc">
+                    <svg class="plate-icon" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><use href="#i-plate"/></svg>
+                    <span class="plate-count is-empty" data-cart-count>0</span>
+                </span>
+            </button>
+            <button type="button" class="glass icon-btn cart-mobile" data-open-cart aria-label="Votre assiette">
+                <svg class="plate-icon" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><use href="#i-plate"/></svg>
+                <span class="plate-count is-empty" data-cart-count>0</span>
+            </button>
+            <button type="button" class="glass icon-btn burger" id="nav-toggle" aria-expanded="false" aria-controls="nav-drawer" aria-label="Ouvrir le menu">
+                <span class="burger__lines" aria-hidden="true"><span></span><span></span><span></span></span>
+            </button>
+            <nav class="glass mobile-menu" id="nav-drawer" aria-label="Navigation mobile" hidden>
+                <ul>
+                    <li><a href="#menu">Menu</a></li>
+                    <li><a href="#maison">La maison</a></li>
+                    <li><a href="#pourquoi">Pourquoi nous</a></li>
+                    <li><a href="#nous-trouver">Nous trouver</a></li>
+                    <li><button type="button" data-open-auth>Connexion</button></li>
+                </ul>
+                <button type="button" class="btn-cta btn-cta--block" data-reserve>
+                    <span>Réserver une table</span>
+                    <span class="btn-cta__disc"><svg aria-hidden="true"><use href="#i-arrow"/></svg></span>
+                </button>
+            </nav>
         </div>
     </header>
 
-    <!-- Photo de la cantine qui s'agrandit au scroll (desktop/tablette) ; fixe sur mobile -->
-    <section class="hx-video" id="hx-video" aria-label="La cantine Chez Stanley">
-        <div class="hx-video-stage" id="hx-video-stage">
-            <div class="hx-video-box" id="hx-video-box">
-                <img id="hx-video-el" class="hx-media" src="images/cantine-stanley-1920.jpg" srcset="images/cantine-stanley-960.jpg 960w, images/cantine-stanley-1920.jpg 1920w" sizes="100vw" width="1920" height="1074" alt="La cantine mobile Chez Stanley, prête pour vos événements" loading="lazy" decoding="async">
-                <p class="hx-video-heading" id="hx-video-heading">Du grill à ta table : ailes, grillades et tous les matchs sur grand écran, ici à Sherbrooke.</p>
-            </div>
-        </div>
-    </section>
+    <div id="smooth-wrapper">
+    <div id="smooth-content">
+    <main>
 
-    <!-- Reopening Section — new building, old one demolished -->
-    <section id="reopening" class="reopening-section">
-        <div class="reopening-container">
-            <span class="reopening-badge">Ouverture bientôt</span>
-            <h2 class="text">Chez Stanley fait peau neuve</h2>
-            <p class="line">Notre ancienne bâtisse a été démolie pour faire place à une toute nouvelle adresse — plus grande, plus moderne, toujours à Sherbrooke. La construction avance bien et on a hâte de vous accueillir dans notre nouveau chez-nous.</p>
-            <div class="reopening-gallery" aria-label="Photos de la nouvelle bâtisse">
-                <figure class="reopening-item reopening-item--feature reveal">
-                    <img src="images/reopening/exterior-night.jpg?v=1" alt="Rendu extérieur de la nouvelle bâtisse Chez Stanley, de nuit" loading="lazy" />
-                </figure>
-                <figure class="reopening-item reveal">
-                    <img src="images/reopening/entrance-night.jpg?v=1" alt="Rendu de l'entrée de la nouvelle bâtisse Chez Stanley" loading="lazy" />
-                </figure>
+        <!-- HERO -->
+        <section id="accueil" class="hero">
+            <div class="hero__copy" data-hero>
+                <p class="eyebrow eyebrow--light" data-words>Resto-bar sportif · Sherbrooke</p>
+                <h1 class="hero__title" data-words>Le grill, la bière et tous les matchs</h1>
+                <p class="hero__lead" data-words>Comfort food, bière locale bien froide et tous les matchs sur grand écran. Le resto-bar sportif de Sherbrooke.</p>
             </div>
-        </div>
-    </section>
 
-    <!-- About Section -->
-    <section id="about" class="about-section">
-        <div class="about-container">
-            <h2 class="text">Pourquoi nous<br>choisir&nbsp;?</h2>
-            <div class="about-layout">
-                <div class="about-video reveal">
+            <div class="hero__scene" aria-hidden="true">
+                <canvas class="flame-canvas" data-flame="hero"></canvas>
+            </div>
+
+            <p class="hero__trust" data-hero-el="200"><span class="hero__sticker">De retour bientôt !</span> Nouvelle adresse sur la rue King Est</p>
+
+            <ul class="hero__chips" data-hero-el="300">
+                <li>Ailes signature</li><li>Bière de microbrasserie</li><li>Hockey sur grand écran</li><li>Comfort food</li><li>Programme de fidélité</li>
+            </ul>
+
+            <div class="hero__actions" data-hero-el="380">
+                <a href="#menu" class="btn primary-btn">Commander</a>
+                <button type="button" class="btn btn--light" id="reserve-open">Réserver une table</button>
+            </div>
+        </section>
+
+        <!-- PHOTO — se déploie en plein écran au scroll -->
+        <section id="cantine" class="reel" aria-label="La cantine Chez Stanley">
+            <div class="reel__stage" id="reel-stage">
+                <div class="reel__frame" id="reel-frame">
+                    <img class="reel__media" id="reel-media" src="images/cantine-stanley-1920.jpg" srcset="images/cantine-stanley-960.jpg 960w, images/cantine-stanley-1920.jpg 1920w" sizes="100vw" width="1920" height="1074" alt="La cantine mobile Chez Stanley, prête pour vos événements" decoding="async">
+                    <p class="display reel__caption" id="reel-caption">Du grill à ta table.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MENU — rail horizontal épinglé -->
+        <section id="menu" class="track-section">
+            <div class="track-runway" id="track-runway">
+                <div class="track-stage" id="track-stage">
+                    <div class="track-head">
+                        <p class="eyebrow track-head__eyebrow" data-words>Notre menu</p>
+                        <h2 class="h2 track-head__title" data-words>Les plats signature de la maison</h2>
+                        <p class="track-head__lead" data-words>Burger, côtes levées, bol, penne et brochette. Ajoute-les à ton assiette et cumule des points à chaque commande.</p>
+                    </div>
+                    <div class="track" id="track">
+                        <article class="card card--orange card--steps">
+                            <div class="card__top">
+                                <p class="card__index">01</p>
+                                <h3 class="card__title">Comment ça marche</h3>
+                            </div>
+                            <ol class="steps">
+                                <li><span>Choisis tes plats</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></li>
+                                <li><span>Ajoute-les à ton assiette</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></li>
+                                <li><span>Cumule des points de fidélité</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></li>
+                            </ol>
+                        </article>
+                        <!-- cartes des plats injectées par script.js (avant #track-end) -->
+                        <article class="card card--ink card--end" id="track-end">
+                            <div class="card__top">
+                                <p class="card__index">07</p>
+                                <h3 class="card__title">Une table pour le prochain match ?</h3>
+                                <p class="card__desc">Réserve en quelques secondes. On garde la bière au froid.</p>
+                            </div>
+                            <div class="card__bottom">
+                                <span class="card__hint">Réserver</span>
+                                <button type="button" class="ring" data-reserve aria-label="Réserver une table"><svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LA MAISON — glisse par-dessus le rail -->
+        <section id="maison" class="about">
+            <div class="about__banner" id="about-banner">
+                <div class="about__banner-inner" id="about-banner-inner">
+                    <img class="about__banner-photo" src="images/reopening/exterior-night.jpg?v=1" alt="Rendu extérieur de la nouvelle bâtisse Chez Stanley, de nuit" loading="lazy" decoding="async" width="1600" height="771">
+                    <span class="about__badge">Ouverture bientôt</span>
+                </div>
+            </div>
+
+            <div class="about__body">
+                <div class="about__left">
+                    <p class="eyebrow" data-words>La maison</p>
+                    <dl class="stats">
+                        <div class="stat"><dt>Plats signature au menu</dt><dd class="display" data-count="5">5</dd></div>
+                        <div class="stat"><dt>Ouvert toute la semaine</dt><dd class="display" data-count="7/7">7/7</dd></div>
+                        <div class="stat"><dt>Point de fidélité par dollar</dt><dd class="display" data-count="1 pt">1 pt</dd></div>
+                        <div class="stat"><dt>Fermeture le vendredi et le samedi</dt><dd class="display" data-count="1 h">1 h</dd></div>
+                    </dl>
+                </div>
+                <div class="about__right">
+                    <p class="about__para" data-words>
+                        <span class="muted">Chez Stanley fait peau neuve :</span>
+                        <span>l'ancienne bâtisse a laissé sa place à une adresse plus grande et plus moderne, toujours à Sherbrooke.</span>
+                        <span class="muted">La construction avance bien,</span>
+                        <span>et on a hâte de vous recevoir pour les matchs, les ailes et une bonne bière d'ici.</span>
+                    </p>
+                    <div class="about__actions" data-reveal>
+                        <button type="button" class="btn primary-btn btn--wide" data-reserve>Réserver une table</button>
+                        <a href="#menu" class="btn btn--dark">Voir le menu</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- POURQUOI NOUS — rail glissable, épinglé -->
+        <section id="pourquoi" class="why">
+            <div class="rail" id="rail" aria-label="Pourquoi nous choisir">
+                <div class="why-intro">
+                    <div class="why-intro__top">
+                        <p class="eyebrow eyebrow--onbrand" data-words>Pourquoi nous choisir ?</p>
+                        <h2 class="why-intro__title">Les soirées de match, version Chez Stanley</h2>
+                    </div>
+                    <a class="social" href="https://www.instagram.com/chezstanleyrestobar/" target="_blank" rel="noopener" aria-label="Chez Stanley sur Instagram">
+                        <svg aria-hidden="true"><use href="#i-instagram"/></svg>
+                        <span>@chezstanleyrestobar</span>
+                    </a>
+                </div>
+
+                <figure class="why-media why-media--video">
                     <video autoplay muted loop playsinline preload="metadata" poster="video/about-live-poster.jpg" aria-hidden="true">
                         <source src="video/about-live.mp4?v=1" type="video/mp4" />
                     </video>
-                </div>
-                <div class="features-grid">
-                    <div class="feature-card reveal">
-                        <div class="feature-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 8h11v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8Z" />
-                                <path d="M16 10.5h1.5a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H16" />
-                                <path d="M8 8V5.5A1.5 1.5 0 0 1 9.5 4H11" />
-                            </svg>
-                        </div>
-                        <h3 class="text">Bière de microbrasserie</h3>
-                        <p class="line">On déniche les meilleures bières d'ici pour accompagner ton repas à la perfection.</p>
-                    </div>
-                    <div class="feature-card reveal">
-                        <div class="feature-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2.5c1 2.6-1.8 3.7-1.8 6.3a2.8 2.8 0 0 0 5.6 0c0-1-.6-1.8-1-2.5.6.8 1.2 1.8 1.2 3a4.2 4.2 0 1 1-8.4 0c0-3.2 2.7-4 4.4-6.8Z" />
-                            </svg>
-                        </div>
-                        <h3 class="text">Ailes signature</h3>
-                        <p class="line">Nos ailes sont légendaires. Enrobées de sauces maison qui ont du punch.</p>
-                    </div>
-                    <div class="feature-card reveal">
-                        <div class="feature-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M7 4h10v4a5 5 0 0 1-10 0V4Z" />
-                                <path d="M7 5H4.5a1.5 1.5 0 0 0 0 3H6M17 5h2.5a1.5 1.5 0 0 1 0 3H18" />
-                                <path d="M12 13v3.5" />
-                                <path d="M9 20.5h6" />
-                                <path d="M9.8 16.5h4.4l.4 4H9.4l.4-4Z" />
-                            </svg>
-                        </div>
-                        <h3 class="text">Programme de fidélité</h3>
-                        <p class="line">Accumule des points à chaque commande et débloque des rabais exclusifs.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Menu Section -->
-    <section id="menu" class="menu-section section--crayon">
-        <div class="menu-container">
-            <h2 class="text">Notre menu</h2>
-            <div class="menu-grid" id="menu-grid" aria-label="Notre menu">
-                <!-- Populated by JS -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Gallery Section -->
-    <section id="gallery" class="gallery-section">
-        <div class="section-container">
-            <h2 class="text">Un aperçu de la place</h2>
-            <p class="section-lead line">Soirées de match, pintes bien froides et assiettes qui se montrent.</p>
-            <div class="gallery-grid">
-                <figure class="gallery-item gallery-item--feature reveal">
-                    <img src="images/gallery/combo.jpg?v=1" alt="Burger et frites maison, panier partagé" loading="lazy" />
+                    <figcaption>Musique live au bar</figcaption>
                 </figure>
-                <figure class="gallery-item reveal">
-                    <img src="images/gallery/pizza.jpg?v=1" alt="Pain plat garni de légumes grillés" loading="lazy" />
-                </figure>
-                <figure class="gallery-item reveal">
-                    <img src="images/gallery/scallops.jpg?v=1" alt="Pétoncles panés et salade" loading="lazy" />
-                </figure>
-            </div>
-        </div>
-    </section>
 
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="testimonials-section section--crayon">
-        <div class="section-container">
-            <h2 class="text">Ce que disent les gens d'ici</h2>
-            <p class="section-lead line">Les habitués reviennent toujours. Voici pourquoi.</p>
-            <div class="testimonials-grid">
-                <blockquote class="testimonial-card">
-                    <div class="stars" aria-hidden="true">★★★★★</div>
+                <article class="why-card">
+                    <div class="why-card__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 8h11v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8Z" />
+                            <path d="M16 10.5h1.5a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2H16" />
+                            <path d="M8 8V5.5A1.5 1.5 0 0 1 9.5 4H11" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="why-card__title">Bière de microbrasserie</h3>
+                        <p class="why-card__desc">On déniche les meilleures bières d'ici pour accompagner ton repas à la perfection.</p>
+                    </div>
+                </article>
+
+                <figure class="why-media"><img src="images/gallery/combo.jpg?v=1" alt="Burger et frites maison, panier partagé" loading="lazy" draggable="false"></figure>
+
+                <article class="why-card">
+                    <div class="why-card__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2.5c1 2.6-1.8 3.7-1.8 6.3a2.8 2.8 0 0 0 5.6 0c0-1-.6-1.8-1-2.5.6.8 1.2 1.8 1.2 3a4.2 4.2 0 1 1-8.4 0c0-3.2 2.7-4 4.4-6.8Z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="why-card__title">Ailes signature</h3>
+                        <p class="why-card__desc">Nos ailes sont légendaires. Enrobées de sauces maison qui ont du punch.</p>
+                    </div>
+                </article>
+
+                <figure class="why-media"><img src="images/gallery/pizza.jpg?v=1" alt="Pain plat garni de légumes grillés" loading="lazy" draggable="false"></figure>
+
+                <article class="why-card">
+                    <div class="why-card__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 4h10v4a5 5 0 0 1-10 0V4Z" />
+                            <path d="M7 5H4.5a1.5 1.5 0 0 0 0 3H6M17 5h2.5a1.5 1.5 0 0 1 0 3H18" />
+                            <path d="M12 13v3.5" />
+                            <path d="M9 20.5h6" />
+                            <path d="M9.8 16.5h4.4l.4 4H9.4l.4-4Z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="why-card__title">Programme de fidélité</h3>
+                        <p class="why-card__desc">Accumule des points à chaque commande et débloque des rabais exclusifs.</p>
+                    </div>
+                </article>
+
+                <figure class="why-media"><img src="images/gallery/scallops.jpg?v=1" alt="Pétoncles panés et salade" loading="lazy" draggable="false"></figure>
+
+                <blockquote class="quote">
+                    <div class="quote__stars" aria-label="5 étoiles">★★★★★</div>
                     <p>« Les meilleures ailes du quartier, sans contredit. Les points de fidélité ont payé une tournée complète le mois passé. »</p>
                     <footer>
-                        <img class="testimonial-avatar" src="images/avatars/rev-1.jpg?v=2" alt="" loading="lazy" />
-                        <span class="testimonial-name">Danielle L.<small>Habituée depuis 2019</small></span>
+                        <img src="images/avatars/rev-1.jpg?v=2" alt="" loading="lazy" draggable="false">
+                        <span>Danielle L.<small>Habituée depuis 2019</small></span>
                     </footer>
                 </blockquote>
-                <blockquote class="testimonial-card">
-                    <div class="stars" aria-hidden="true">★★★★★</div>
+                <blockquote class="quote">
+                    <div class="quote__stars" aria-label="5 étoiles">★★★★★</div>
                     <p>« On regarde tous les matchs ici. Service rapide, bière froide, et la poutine goûte vraiment comme à la maison. »</p>
                     <footer>
-                        <img class="testimonial-avatar" src="images/avatars/rev-2.jpg?v=2" alt="" loading="lazy" />
-                        <span class="testimonial-name">Marc R.<small>Détenteur d'un abonnement de saison</small></span>
+                        <img src="images/avatars/rev-2.jpg?v=2" alt="" loading="lazy" draggable="false">
+                        <span>Marc R.<small>Détenteur d'un abonnement de saison</small></span>
                     </footer>
                 </blockquote>
-                <blockquote class="testimonial-card">
-                    <div class="stars" aria-hidden="true">★★★★★</div>
+                <blockquote class="quote">
+                    <div class="quote__stars" aria-label="5 étoiles">★★★★★</div>
                     <p>« Commandé d'avance sur le site, arrivé sur place, tout était prêt. C'est comme ça que ça devrait marcher. »</p>
                     <footer>
-                        <img class="testimonial-avatar" src="images/avatars/rev-3.jpg?v=2" alt="" loading="lazy" />
-                        <span class="testimonial-name">Kevin T.<small>Commande chaque semaine</small></span>
+                        <img src="images/avatars/rev-3.jpg?v=2" alt="" loading="lazy" draggable="false">
+                        <span>Kevin T.<small>Commande chaque semaine</small></span>
                     </footer>
                 </blockquote>
-            </div>
-        </div>
-    </section>
 
-    <!-- Location Section -->
-    <section id="location" class="location-section">
-        <div class="section-container">
-            <h2 class="text">Nous trouver</h2>
-            <p class="section-lead line">Sur la rue King Est, à Sherbrooke.</p>
-            <div class="location-grid">
-                <div class="location-map reveal">
-                    <iframe
-                        title="Carte vers Chez Stanley"
-                        src="https://maps.google.com/maps?q=1180%20Rue%20King%20E%2C%20Sherbrooke%2C%20QC&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
-                <div class="location-details reveal">
-                    <div class="location-block">
-                        <h3 class="text">Adresse</h3>
-                        <p class="line">1180, rue King Est<br />Sherbrooke, QC</p>
-                    </div>
-                    <div class="location-block">
-                        <h3 class="text">Heures d'ouverture</h3>
-                        <p class="line">Lun–Jeu&nbsp;&nbsp;11 h – 23 h<br />
-                        Ven–Sam&nbsp;&nbsp;&nbsp;&nbsp;11 h – 1 h<br />
-                        Dimanche&nbsp;&nbsp;&nbsp;&nbsp;11 h – 22 h</p>
-                    </div>
-                    <div class="location-block">
-                        <h3 class="text">Contact</h3>
-                        <p class="line">(819) 562-3350<br />bonjour@chezstanley.example</p>
-                    </div>
-                    <a class="btn primary-btn" href="https://maps.google.com/maps?q=1180%20Rue%20King%20E%2C%20Sherbrooke%2C%20QC" target="_blank" rel="noopener">Obtenir l'itinéraire</a>
-                </div>
+                <a href="#menu" class="why-more">
+                    <p class="display why-more__title">Ton prochain match, c'est ici</p>
+                    <span class="why-more__cta"><span>Voir le menu</span><span class="ring"><svg aria-hidden="true"><use href="#i-arrow"/></svg></span></span>
+                </a>
+                <span class="rail__gutter" aria-hidden="true"></span>
             </div>
-        </div>
-    </section>
+            <div class="rail-progress"><div class="rail-progress__fill" id="rail-fill"></div></div>
+        </section>
 
-    <!-- Footer — normal, in-flow at the end of the page -->
-    <footer class="site-footer" id="site-footer">
-        <div class="footer-inner">
-            <div class="footer-grid">
-                <div class="footer-col footer-brand">
-                    <img class="footer-logo" src="images/logo-footer.png?v=1" alt="Chez Stanley — resto • bar" />
-                    <p>Resto-bar sportif à Sherbrooke — comfort food, bière locale bien froide et un programme de fidélité qui récompense pour vrai.</p>
+        <!-- NOUS TROUVER -->
+        <section id="nous-trouver" class="contact">
+            <div class="contact__scene" aria-hidden="true"><canvas class="flame-canvas" data-flame="contact"></canvas></div>
+            <div class="contact__copy">
+                <div class="contact__titles">
+                    <p class="eyebrow eyebrow--light" data-words>Nous trouver</p>
+                    <h2 class="h2" data-words>On se voit sur la rue King Est</h2>
                 </div>
-                <div class="footer-col">
-                    <h4>Explorer</h4>
-                    <a href="#menu">Menu</a>
-                    <a href="#about">À propos</a>
-                    <a href="#gallery">Galerie</a>
-                    <a href="#location">Nous trouver</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Nous visiter</h4>
-                    <p>1180, rue King Est<br />Sherbrooke, QC</p>
-                    <p>(819) 562-3350</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Nous suivre</h4>
-                    <a href="#" rel="noopener">Instagram</a>
-                    <a href="#" rel="noopener">Facebook</a>
-                    <a href="#" rel="noopener">X / Twitter</a>
-                </div>
+                <p class="contact__lead" data-words>Réserve ta table pour le prochain match ou passe nous voir pour une pinte et des ailes. Ici, tout le monde est un habitué.</p>
             </div>
-            <div class="footer-bottom">
-                <span>© 2026 Chez Stanley. Tous droits réservés.</span>
-                <span>Version démo.</span>
+
+            <aside class="contact__panel">
+                <div class="contact__panel-head">
+                    <img class="contact__logo" src="images/logo-footer.png?v=1" alt="Chez Stanley — resto • bar" width="700" height="314" loading="lazy">
+                    <h3 class="display contact__panel-title">Passe nous voir</h3>
+                </div>
+                <dl class="info">
+                    <div class="info__row">
+                        <dt><svg aria-hidden="true"><use href="#i-pin"/></svg>Adresse</dt>
+                        <dd>1180, rue King Est<br>Sherbrooke, QC</dd>
+                    </div>
+                    <div class="info__row">
+                        <dt><svg aria-hidden="true"><use href="#i-phone"/></svg>Contact</dt>
+                        <dd><a href="tel:+18195623350">(819) 562-3350</a><br><a href="mailto:bonjour@chezstanley.example">bonjour@chezstanley.example</a></dd>
+                    </div>
+                    <div class="info__row">
+                        <dt><svg aria-hidden="true"><use href="#i-clock"/></svg>Heures</dt>
+                        <dd>
+                            <ul class="hours" id="hours">
+                                <li data-days="1,2,3,4"><span>Lun – Jeu</span><span>11 h – 23 h</span></li>
+                                <li data-days="5,6"><span>Ven – Sam</span><span>11 h – 1 h</span></li>
+                                <li data-days="0"><span>Dimanche</span><span>11 h – 22 h</span></li>
+                            </ul>
+                        </dd>
+                    </div>
+                </dl>
+                <a href="https://maps.google.com/maps?q=1180%20Rue%20King%20E%2C%20Sherbrooke%2C%20QC" target="_blank" rel="noopener" class="btn-cta btn-cta--block contact__cta">
+                    <span>Obtenir l'itinéraire</span>
+                    <span class="btn-cta__disc"><svg aria-hidden="true"><use href="#i-arrow"/></svg></span>
+                </a>
+            </aside>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <img class="footer__logo" src="images/logo-footer.png?v=1" alt="Chez Stanley — resto • bar" width="700" height="314" loading="lazy">
+        <div class="footer__side">
+            <nav class="footer__links" aria-label="Pied de page">
+                <a href="#menu">Menu</a>
+                <a href="#maison">La maison</a>
+                <a href="#nous-trouver">Nous trouver</a>
+                <a href="https://www.instagram.com/chezstanleyrestobar/" target="_blank" rel="noopener">Instagram</a>
                 <a href="admin.html">Accès personnel</a>
-            </div>
+            </nav>
+            <p class="footer__meta">© <span id="year">2026</span> Chez Stanley. Tous droits réservés. Version démo.</p>
         </div>
     </footer>
 
@@ -380,12 +450,28 @@
         </div>
     </div>
 
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <!-- Icônes (trait fin) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <symbol id="i-arrow" viewBox="0 0 19.0049 19"><path d="M19.0049 1.18457H19.002V18.3564H17.8047V2.21973L0.84668 19L0 18.1621L17.1582 1.18457H0.453125V0H19.0049V1.18457Z" fill="currentColor"/></symbol>
+            <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+            <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+            <symbol id="i-plate" viewBox="-3 -2 58 47"><path d="M26 7.667a24 24 0 0 0-24 24h48a24 24 0 0 0-24-24Z" /><line x1="2" y1="40.333" x2="50" y2="40.333" /><line x1="26" y1="2" x2="26" y2="7.667" /></symbol>
+            <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></g></symbol>
+            <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" d="M5 4h3.5l1.5 4-2 1.5a11 11 0 0 0 6.5 6.5L16 14l4 1.5V19a1.5 1.5 0 0 1-1.6 1.5C10.6 20 4 13.4 3.5 5.6A1.5 1.5 0 0 1 5 4Z"/></symbol>
+            <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></g></symbol>
+            <symbol id="i-instagram" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></g></symbol>
+        </defs>
+    </svg>
+
     <!-- Animation engine -->
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+    <script src="flame.js?v=1"></script>
     <script src="store.js?v=15"></script>
-    <script src="script.js?v=41"></script>
+    <script src="script.js?v=45"></script>
 </body>
 </html>
