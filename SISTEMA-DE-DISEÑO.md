@@ -795,3 +795,7 @@ Flamme Up, y eligió **estructura + animaciones con la identidad de Stanley** (n
 - `setupReel()` elige fuentes según el ancho y solo reproduce cuando la sección es visible.
 - Herramienta: no hay ffmpeg en el sistema; se usó el binario de `imageio-ffmpeg` en un venv
   del scratchpad.
+- **Mensaje (12 oct 2026):** en vez de « Du grill à ta table. », el bloque muestra la pastilla
+  naranja « Ouverture bientôt » + « On revient bientôt avec une *toute nouvelle image*. »
+  (la parte destacada en naranja, `.reel__title em`). Aparece al final del crecimiento.
+

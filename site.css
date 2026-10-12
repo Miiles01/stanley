@@ -349,16 +349,27 @@ button.ring:active { transform: scale(0.94); }
         box-shadow: 0 2.5rem 5rem -2rem rgba(0, 0, 0, 0.6);
     }
 }
-.reel__frame::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(17, 17, 17, 0) 50%, rgba(17, 17, 17, 0.7) 100%); pointer-events: none; }
+.reel__frame::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(17, 17, 17, 0) 40%, rgba(17, 17, 17, 0.88) 100%); pointer-events: none; }
 .reel__caption {
-    position: absolute; left: var(--gutter); bottom: 2.5rem; z-index: 1;
-    max-width: 16ch;
-    font-size: 2.2rem; line-height: 1.05; color: #fff;
+    position: absolute; left: var(--gutter); right: var(--gutter); bottom: 2.5rem; z-index: 1;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 1rem;
+    color: #fff;
     opacity: 0;
 }
+.reel__badge {
+    padding: 0.45rem 1.1rem;
+    border-radius: 999px;
+    background: var(--primary); color: #fff;
+    font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    transform: rotate(-3deg);
+}
+.reel__title { font-size: 2rem; line-height: 1.08; max-width: 16ch; }
+.reel__title em { font-style: normal; color: var(--primary); }
 @media (min-width: 1024px) {
     /* Dans la bande floue à gauche de la vidéo 4:5, sans la recouvrir. */
-    .reel__caption { left: 2.5rem; bottom: 3rem; font-size: 3.4rem; max-width: calc(50% - 23.5rem); }
+    .reel__caption { left: 2.5rem; right: auto; bottom: 3rem; max-width: calc(50% - 23.5rem); gap: 1.25rem; }
+    .reel__badge { font-size: 0.95rem; padding: 0.55rem 1.4rem; }
+    .reel__title { font-size: 2.6rem; }
 }
 
 /* ==========================================================================
