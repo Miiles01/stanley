@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Ultra&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=67">
-    <link rel="stylesheet" href="site.css?v=2">
+    <link rel="stylesheet" href="site.css?v=3">
 </head>
 <body class="site">
 
@@ -102,11 +102,14 @@
             </div>
         </section>
 
-        <!-- PHOTO — se déploie en plein écran au scroll -->
-        <section id="cantine" class="reel" aria-label="La cantine Chez Stanley">
+        <!-- VIDÉO — se déploie en plein écran au scroll (720p sur mobile, 1080p ailleurs) -->
+        <section id="cantine" class="reel" aria-label="Du grill à ta table chez Stanley">
             <div class="reel__stage" id="reel-stage">
                 <div class="reel__frame" id="reel-frame">
-                    <img class="reel__media" id="reel-media" src="images/cantine-stanley-1920.jpg" srcset="images/cantine-stanley-960.jpg 960w, images/cantine-stanley-1920.jpg 1920w" sizes="100vw" width="1920" height="1074" alt="La cantine mobile Chez Stanley, prête pour vos événements" decoding="async">
+                    <video class="reel__media" id="reel-media" autoplay muted loop playsinline preload="metadata" poster="video/reel-sandwich-poster.jpg?v=1" width="1920" height="1080" aria-hidden="true">
+                        <source src="video/reel-sandwich-720.mp4?v=1" type="video/mp4" media="(max-width: 900px)">
+                        <source src="video/reel-sandwich-1080.mp4?v=1" type="video/mp4">
+                    </video>
                     <p class="display reel__caption" id="reel-caption">Du grill à ta table.</p>
                 </div>
             </div>

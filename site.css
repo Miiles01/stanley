@@ -330,7 +330,7 @@ button.ring:active { transform: scale(0.94); }
     will-change: clip-path;
 }
 @media (min-width: 768px) { .reel__frame { clip-path: inset(22% 28% 22% 28% round 24px); } }
-.reel__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 55% 45%; transform-origin: center; }
+.reel__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; transform-origin: center; }
 .reel__frame::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(17, 17, 17, 0) 50%, rgba(17, 17, 17, 0.7) 100%); pointer-events: none; }
 .reel__caption {
     position: absolute; left: var(--gutter); bottom: 2.5rem; z-index: 1;
