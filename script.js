@@ -565,6 +565,37 @@ function setupReel() {
         .to({}, { duration: 0.25 }); // petite pause en plein écran avant de reprendre le scroll
 }
 
+// ----- Vidéo « Venez découvrir » : 4:5 dès 768 px, 9:16 sur mobile ; lecture seulement à l'écran -----
+function setupDiscover() {
+    const video = $('#discover-video');
+    const bg = $('#discover-bg');
+    const frame = $('#discover-frame');
+    const wide = window.matchMedia('(min-width: 768px)').matches;
+    video.poster = wide ? video.dataset.posterWide : video.dataset.posterMobile;
+    video.src = wide ? video.dataset.srcWide : video.dataset.srcMobile;
+    if (wide) bg.src = bg.dataset.src;
+
+    new IntersectionObserver(([e]) => {
+        [video, wide ? bg : null].forEach(v => {
+            if (!v) return;
+            if (e.isIntersecting) v.play().catch(() => {}); else v.pause();
+        });
+    }, { threshold: 0.15 }).observe(frame);
+
+    if (!hasGsap) return;
+    // La vidéo grandit en entrant, le fond flou glisse plus lentement.
+    gsap.fromTo(frame, { scale: 0.84, rotate: wide ? -2 : 0 }, {
+        scale: 1, rotate: 0, ease: 'none',
+        scrollTrigger: { trigger: '#decouvrir', start: 'top bottom', end: 'top 15%', scrub: 0.6 }
+    });
+    if (wide) {
+        gsap.fromTo(bg, { yPercent: -6 }, {
+            yPercent: 6, ease: 'none',
+            scrollTrigger: { trigger: '#decouvrir', start: 'top bottom', end: 'bottom top', scrub: true }
+        });
+    }
+}
+
 // ----- Bannière en parallaxe -----
 function setupBanner() {
     gsap.fromTo('#about-banner-inner', { yPercent: -8 }, {
@@ -711,6 +742,7 @@ function boot() {
             smoother.paused(true);
         }
         setupReel();
+        setupDiscover();
         setupTrack();
         setupBanner();
         setupCounters();
