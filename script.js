@@ -554,7 +554,21 @@ function setupTrack() {
 // ----- Photo de la cantine qui s'agrandit -----
 function setupReel() {
     const frame = $('#reel-frame');
+    const video = $('#reel-media');
+    const bg = $('#reel-bg');
     const mobile = window.matchMedia('(max-width: 767px)').matches;
+    // 9:16 plein cadre sur mobile ; 4:5 + fond flou dès 768 px.
+    video.poster = mobile ? video.dataset.posterMobile : video.dataset.posterWide;
+    video.src = mobile ? video.dataset.srcMobile : video.dataset.srcWide;
+    if (!mobile) bg.src = bg.dataset.src;
+    // Lecture seulement quand la section est visible (batterie, données mobiles).
+    new IntersectionObserver(([e]) => {
+        [video, mobile ? null : bg].forEach(v => {
+            if (!v) return;
+            if (e.isIntersecting) v.play().catch(() => {}); else v.pause();
+        });
+    }, { threshold: 0.05 }).observe(frame);
+
     const from = mobile ? 'inset(24% 8% 24% 8% round 24px)' : 'inset(22% 28% 22% 28% round 24px)';
     const tl = gsap.timeline({
         scrollTrigger: { trigger: '#reel-stage', start: 'top top', end: '+=140%', pin: true, scrub: 0.6, anticipatePin: 1 }
@@ -563,37 +577,6 @@ function setupReel() {
         .fromTo('#reel-media', { scale: 1.18 }, { scale: 1, ease: 'none', duration: 1 }, 0)
         .fromTo('#reel-caption', { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.3 }, 0.75)
         .to({}, { duration: 0.25 }); // petite pause en plein écran avant de reprendre le scroll
-}
-
-// ----- Vidéo « Venez découvrir » : 4:5 dès 768 px, 9:16 sur mobile ; lecture seulement à l'écran -----
-function setupDiscover() {
-    const video = $('#discover-video');
-    const bg = $('#discover-bg');
-    const frame = $('#discover-frame');
-    const wide = window.matchMedia('(min-width: 768px)').matches;
-    video.poster = wide ? video.dataset.posterWide : video.dataset.posterMobile;
-    video.src = wide ? video.dataset.srcWide : video.dataset.srcMobile;
-    if (wide) bg.src = bg.dataset.src;
-
-    new IntersectionObserver(([e]) => {
-        [video, wide ? bg : null].forEach(v => {
-            if (!v) return;
-            if (e.isIntersecting) v.play().catch(() => {}); else v.pause();
-        });
-    }, { threshold: 0.15 }).observe(frame);
-
-    if (!hasGsap) return;
-    // La vidéo grandit en entrant, le fond flou glisse plus lentement.
-    gsap.fromTo(frame, { scale: 0.84, rotate: wide ? -2 : 0 }, {
-        scale: 1, rotate: 0, ease: 'none',
-        scrollTrigger: { trigger: '#decouvrir', start: 'top bottom', end: 'top 15%', scrub: 0.6 }
-    });
-    if (wide) {
-        gsap.fromTo(bg, { yPercent: -6 }, {
-            yPercent: 6, ease: 'none',
-            scrollTrigger: { trigger: '#decouvrir', start: 'top bottom', end: 'bottom top', scrub: true }
-        });
-    }
 }
 
 // ----- Bannière en parallaxe -----
@@ -742,7 +725,6 @@ function boot() {
             smoother.paused(true);
         }
         setupReel();
-        setupDiscover();
         setupTrack();
         setupBanner();
         setupCounters();

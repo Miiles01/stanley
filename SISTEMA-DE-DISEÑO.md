@@ -774,21 +774,24 @@ Flamme Up, y eligió **estructura + animaciones con la identidad de Stanley** (n
 - **Preview de Claude Code:** con el panel oculto `requestAnimationFrame` se congela y el
   preloader no avanza; para inspeccionar se puede avanzar GSAP a mano con `gsap.ticker.tick()`.
 
-### 22.3 « Venez découvrir » — video promo en grande (12 oct 2026)
+### 22.3 Video promo en el bloque « Du grill à ta table. » (12 oct 2026)
 - Fuente: `~/Downloads/🎤🍻 Venez découvrir Chez Stanley !….mp4` (vertical 720×1280, 13 s: DJ,
   burger/poutine, torre de cerveza, costillas, calamares, terraza, música live y cierre « Chez
   Stanley »). Se corta en 12,7 s (quita el negro final), sin audio, H.264 `+faststart`.
+  Reemplaza al video del sandwich (`reel-sandwich-*`, ya no se usa).
+- **Va en `#cantine`** (la tarjeta que crece a pantalla completa con el scroll), no en una
+  sección aparte — el usuario lo pidió ahí.
 - **Recorte 4:5 centrado** (`crop=720:900:0:190`) para escritorio y tablet: conserva el sujeto
   de todas las tomas (revisado en contact sheet). 16:9 se descartó: dejaba fuera casi todo.
-  - `video/decouvrir-45.mp4` (720×900, CRF 25, 3 MB) + poster — escritorio y tablet (≥768).
+  - `video/decouvrir-45.mp4` (720×900, CRF 25, 3 MB) + poster — ≥768px.
   - `video/decouvrir-916.mp4` (540×960 completo, CRF 26, 2,2 MB) + poster — móvil.
   - `video/decouvrir-bg.mp4` (160×200, CRF 32, 146 KB) — fondo borroso (`blur(40px)`), solo ≥768.
-- Sección `#decouvrir` entre la cantine y el menú, fondo `#111` con esquinas 48px. Escritorio:
-  texto a la izquierda, video 4:5 de `100lvh − 8rem` de alto a la derecha. Tablet: apilado,
-  video 4:5 hasta 40rem de ancho. Móvil: 9:16 a lo ancho. El video crece (`scale 0.84 → 1`)
-  al entrar y solo se reproduce visible (IntersectionObserver). `setupDiscover()` elige la
-  fuente según el ancho. `.track-section` pasó a fondo `#111` para que las esquinas del rail
-  queden sobre el oscuro.
+- **≥768px:** dentro de `.reel__frame` el video 4:5 nítido va centrado, alto como la pantalla
+  menos 2rem arriba/abajo, radio 24px; detrás `.reel__bg` (la versión borrosa) llena todo.
+  La tarjeta inicial (`clip-path inset(22% 28%)`) muestra solo el centro del video; al crecer
+  aparece entero con las bandas borrosas. En escritorio « Du grill à ta table. » va en la banda
+  izquierda (`max-width: calc(50% - 23.5rem)`) para no tapar el video.
+- **Móvil:** el 9:16 llena la pantalla (`object-fit: cover`), sin fondo borroso.
+- `setupReel()` elige fuentes según el ancho y solo reproduce cuando la sección es visible.
 - Herramienta: no hay ffmpeg en el sistema; se usó el binario de `imageio-ffmpeg` en un venv
   del scratchpad.
-

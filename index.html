@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Ultra&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=67">
-    <link rel="stylesheet" href="site.css?v=3">
+    <link rel="stylesheet" href="site.css?v=5">
 </head>
 <body class="site">
 
@@ -102,38 +102,19 @@
             </div>
         </section>
 
-        <!-- VIDÉO — se déploie en plein écran au scroll (720p sur mobile, 1080p ailleurs) -->
+        <!-- VIDÉO — se déploie en plein écran au scroll.
+             Bureau/tablette : vidéo 4:5 nette au centre, la même vidéo floue remplit l'écran derrière.
+             Mobile : vidéo verticale 9:16 plein cadre. Sources choisies dans setupReel(). -->
         <section id="cantine" class="reel" aria-label="Du grill à ta table chez Stanley">
             <div class="reel__stage" id="reel-stage">
                 <div class="reel__frame" id="reel-frame">
-                    <video class="reel__media" id="reel-media" autoplay muted loop playsinline preload="metadata" poster="video/reel-sandwich-poster.jpg?v=1" width="1920" height="1080" aria-hidden="true">
-                        <source src="video/reel-sandwich-720.mp4?v=1" type="video/mp4" media="(max-width: 900px)">
-                        <source src="video/reel-sandwich-1080.mp4?v=1" type="video/mp4">
-                    </video>
+                    <video class="reel__bg" id="reel-bg" muted loop playsinline preload="none" aria-hidden="true" data-src="video/decouvrir-bg.mp4?v=1"></video>
+                    <video class="reel__media" id="reel-media" muted loop playsinline preload="metadata" aria-label="Soirées Chez Stanley : DJ, plats, terrasse et musique live"
+                        data-src-wide="video/decouvrir-45.mp4?v=1" data-poster-wide="video/decouvrir-45-poster.jpg?v=1"
+                        data-src-mobile="video/decouvrir-916.mp4?v=1" data-poster-mobile="video/decouvrir-916-poster.jpg?v=1"></video>
                     <p class="display reel__caption" id="reel-caption">Du grill à ta table.</p>
                 </div>
             </div>
-        </section>
-
-        <!-- DÉCOUVRIR — vidéo promo en grand (4:5 bureau/tablette, 9:16 mobile) sur fond flou -->
-        <section id="decouvrir" class="discover" aria-label="Venez découvrir Chez Stanley">
-            <div class="discover__bg" aria-hidden="true">
-                <video class="discover__bg-video" id="discover-bg" muted loop playsinline preload="none" data-src="video/decouvrir-bg.mp4?v=1"></video>
-            </div>
-            <div class="discover__copy">
-                <p class="eyebrow" data-words>Venez découvrir Chez Stanley</p>
-                <h2 class="h2" data-words>Des soirées qui ont de l'ambiance</h2>
-                <p class="discover__lead" data-words>DJ, musique live, assiettes généreuses et terrasse au soleil : voici un avant-goût de l'ambiance Chez Stanley.</p>
-                <div class="discover__actions" data-reveal>
-                    <a href="#menu" class="btn primary-btn">Voir le menu</a>
-                    <button type="button" class="btn btn--light" data-reserve>Réserver une table</button>
-                </div>
-            </div>
-            <figure class="discover__frame" id="discover-frame">
-                <video class="discover__video" id="discover-video" muted loop playsinline preload="metadata" aria-label="Aperçu des soirées Chez Stanley : DJ, plats, terrasse et musique live"
-                    data-src-wide="video/decouvrir-45.mp4?v=1" data-poster-wide="video/decouvrir-45-poster.jpg?v=1"
-                    data-src-mobile="video/decouvrir-916.mp4?v=1" data-poster-mobile="video/decouvrir-916-poster.jpg?v=1"></video>
-            </figure>
         </section>
 
         <!-- MENU — rail horizontal épinglé -->
@@ -496,6 +477,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
     <script src="flame.js?v=1"></script>
     <script src="store.js?v=15"></script>
-    <script src="script.js?v=46"></script>
+    <script src="script.js?v=47"></script>
 </body>
 </html>
